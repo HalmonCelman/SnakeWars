@@ -4,24 +4,11 @@
 
 module top_basys3 (
     input  wire clk,
-    input wire rst,
-    input wire PCenBtn,
-    input wire PCen,
-    input wire extCtlBtn,
-    input wire micRstBtn,
-    
-    input wire rx,
-    output logic tx,
-
-    input wire [5:0] sw,
-    output logic [3:0] an,
-    output logic [6:0] seg,
-    output logic dp,
-
+    input wire btnC,
     output logic led
 );
 
-wire clk100MHz;
+logic clk100MHz;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
@@ -34,17 +21,7 @@ clk_wiz_0_clk_wiz u_clk(
 
 top u_top(
     .clk(clk100MHz),
-    .rst,
-    .PCenBtn,
-    .PCen,
-    .extCtlBtn,
-    .micRstBtn,
-    .ctrlBtns(sw),
-    .rx,
-    .tx,
-    .an,
-    .seg,
-    .dp,
+    .rst(btnC),
     .led
 );
 

@@ -27,46 +27,41 @@ set target xc7a35tcpg236-1
 # Specify .xdc files location                   -- EDIT
 set xdc_files {
     constraints/top_basys3.xdc
-    constraints/clk_wiz_0_late.xdc
     constraints/clk_wiz_0.xdc
 }
 
 # Specify SystemVerilog design files location   -- EDIT
 set sv_files {
     rtl/top_basys3.sv
-    ../rtl/micro/commands_pkg.sv
-    ../rtl/micro/decode.sv
-    ../rtl/micro/microDebug.sv
+    ../rtl/mouse/mouse_control.sv
+    ../rtl/snake/collisions.sv
+    ../rtl/snake/communicate.sv
+    ../rtl/snake/draw.sv
+    ../rtl/snake/generate_point.sv
     ../rtl/uart/get_memory.sv
     ../rtl/uart/make_numbers.sv
+    ../rtl/vga/vga_if.sv
+    ../rtl/vga/vga_pkg.sv
+    ../rtl/vga/vga_timing.sv
     ../rtl/top.sv
 }
 
 # Specify Verilog design files location         -- EDIT
 set verilog_files {
-    ../rtl/7seg/disp_hex_mux.v
-    ../rtl/micro/adder.v
-    ../rtl/micro/alu.v
-    ../rtl/micro/branch_ctl.v
-    ../rtl/micro/control_unit.v
-    ../rtl/micro/flopenr.v
-    ../rtl/micro/imem.v
-    ../rtl/micro/micro.v
-    ../rtl/micro/mux2.v
-    ../rtl/micro/regfile.v
+    rtl/clk_wiz_0_clk_wiz.v
     ../rtl/uart/flag_buf.v
     ../rtl/uart/uart_rx.v
     ../rtl/uart/uart_tx.v
     ../rtl/uart/uart.v
-    ../rtl/utils/debounce.v
     ../rtl/utils/fifo.v
-    ../rtl/utils/mod_m_counter.v
-    rtl/clk_wiz_0_clk_wiz.v
 }
 
 # Specify VHDL design files location            -- EDIT
- #set vhdl_files {
- #}
+set vhdl_files {
+    ../rtl/mouse/MouseCtl.vhd
+    ../rtl/mouse/MouseDisplay.vhd
+    ../rtl/mouse/Ps2Interface.vhd
+}
 
 # Specify files for a memory initialization     -- EDIT
 # set mem_files {
