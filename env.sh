@@ -22,3 +22,6 @@ if [[ ! -e sim/common/glbl.v ]]; then
     mkdir -p sim/common
     cp ${VIVADO_DIR}/data/verilog/src/glbl.v sim/common/glbl.v
 fi
+
+# Custom - make results folder - if it doesn't exist
+mkdir -p fpga/results
