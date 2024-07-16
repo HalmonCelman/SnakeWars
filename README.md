@@ -20,7 +20,7 @@ git branch
 ```
 git branch 0_preparation
 ```
-- Jeśli jest to się na niego przełączamy i ściągamy zmiany
+- Przełączamy się na niego i jeśli istniał wcześniej to ściągamy zmiany
 ```
 git checkout 0_preparation
 git pull
