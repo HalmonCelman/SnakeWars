@@ -8,7 +8,7 @@ module top_basys3 (
     output logic led
 );
 
-logic clk100MHz;
+logic clk75MHz;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
@@ -16,11 +16,11 @@ logic clk100MHz;
 
 clk_wiz_0_clk_wiz u_clk(
     .clk,
-    .clk100MHz
+    .clk75MHz
 );
 
 top u_top(
-    .clk(clk100MHz),
+    .clk(clk75MHz),
     .rst(btnC),
     .led
 );

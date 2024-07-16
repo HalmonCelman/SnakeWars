@@ -3,6 +3,7 @@
  * MTM UEC2
  * Author: Piotr Kaczmarczyk
  *
+ * Modified by: Krzysztof Korbaś, Emilia Jerdanek
  * Description:
  * Vga timing controller.
  */

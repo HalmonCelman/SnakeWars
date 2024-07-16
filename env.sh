@@ -24,4 +24,4 @@ if [[ ! -e sim/common/glbl.v ]]; then
 fi
 
 # Custom - make results folder - if it doesn't exist
-mkdir -p fpga/results
+mkdir -p results

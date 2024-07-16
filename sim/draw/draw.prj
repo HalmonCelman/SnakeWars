@@ -3,4 +3,6 @@
 sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/vga/vga_pkg.sv \
         ../../rtl/vga/vga_timing.sv \
-        vga_tb.sv
+        ../../rtl/snake/draw.sv \
+        ../common/tiff_writer.sv \
+        draw_tb.sv

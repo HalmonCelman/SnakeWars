@@ -1,12 +1,13 @@
 # TODO lista
 ***kiedy wykonamy dany punkt należy to zaznaczyć dając X w nawiasie - dzięki temu będziemy widzieć co już jest a co zostało do zrobienia***
 ## Część 0 - przygotowanie
-- ( ) wybrać i wygenerować zegar pasujący do vga zgodnie z ["tą stroną"](http://martin.hinner.info/vga/timing.html) - proponuje 75MHz
-- ( ) dostosować vga do nowej częstotliwości
+- (X) wybrać i wygenerować zegar pasujący do vga zgodnie z ["tą stroną"](http://martin.hinner.info/vga/timing.html) - proponuje 75MHz
+- (X) dostosować vga do nowej częstotliwości
 - ( ) dostosować mysz do nowej częstotliwości
 - ( ) dostosować uart do nowej częstotliwości
 - ( ) stworzyć interfejs mapy
 - ( ) stworzyć interfejs snake'a
+- ( ) zmienić reset asynchroniczny w modułach na synchroniczny
 
 ## Część 1 - rysowanie - maszyna stanów
 - ( ) rysowanie menu

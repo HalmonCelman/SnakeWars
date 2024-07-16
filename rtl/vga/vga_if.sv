@@ -14,7 +14,6 @@
     logic [10:0] hcount;
     logic hsync;
     logic hblnk;
-    logic [11:0] rgb;
 
     modport in(
         input vcount,
@@ -22,8 +21,7 @@
         input vblnk,
         input hcount,
         input hsync,
-        input hblnk,
-        input rgb
+        input hblnk
     );
 
     modport out(
@@ -32,7 +30,6 @@
         output vblnk,
         output hcount,
         output hsync,
-        output hblnk,
-        output rgb
+        output hblnk
     );
  endinterface
