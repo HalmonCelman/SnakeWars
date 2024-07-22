@@ -19,9 +19,9 @@
 
 `timescale 1 ns / 1 ps
 
+import snake_pkg::*;
+
 module draw_tb;
-
-
 /**
  *  Local parameters
  */
@@ -64,6 +64,7 @@ vga_timing u_vga_timing(
 draw dut (
     .clk,
     .rst,
+    .mode(MENU),
     .vga_in,
     .vga_out,
     .rgb

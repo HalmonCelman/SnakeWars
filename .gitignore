@@ -38,5 +38,5 @@ xrun.log
 
 # custom
 *.bit
-*.tiff
+*.tif
 *.log
