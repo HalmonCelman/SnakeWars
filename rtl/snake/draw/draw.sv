@@ -18,8 +18,8 @@ module draw(
 vga_if vga_nxt();
 logic [RGB_B-1:0] rgb_nxt;
 
-vga_if vga_menu(), vga_error();
-logic [RGB_B-1:0] rgb_menu, rgb_error;
+vga_if vga_menu(), vga_error(), vga_win(), vga_lose(), vga_draw();
+logic [RGB_B-1:0] rgb_menu, rgb_error, rgb_win, rgb_lose, rgb_draw;
 
 always_ff @(posedge clk) begin
     if(rst) begin
@@ -65,6 +65,33 @@ always_comb begin
                 vga_nxt.vsync   = vga_error.vsync;
                 rgb_nxt         = rgb_error;
             end
+            WIN: begin
+                vga_nxt.hcount  = vga_win.hcount;
+                vga_nxt.vcount  = vga_win.vcount;
+                vga_nxt.hblnk   = vga_win.hblnk;
+                vga_nxt.vblnk   = vga_win.vblnk;
+                vga_nxt.hsync   = vga_win.hsync;
+                vga_nxt.vsync   = vga_win.vsync;
+                rgb_nxt         = rgb_win;
+            end
+            LOSE: begin
+                vga_nxt.hcount  = vga_lose.hcount;
+                vga_nxt.vcount  = vga_lose.vcount;
+                vga_nxt.hblnk   = vga_lose.hblnk;
+                vga_nxt.vblnk   = vga_lose.vblnk;
+                vga_nxt.hsync   = vga_lose.hsync;
+                vga_nxt.vsync   = vga_lose.vsync;
+                rgb_nxt         = rgb_lose;
+            end
+            DRAW: begin
+                vga_nxt.hcount  = vga_draw.hcount;
+                vga_nxt.vcount  = vga_draw.vcount;
+                vga_nxt.hblnk   = vga_draw.hblnk;
+                vga_nxt.vblnk   = vga_draw.vblnk;
+                vga_nxt.hsync   = vga_draw.hsync;
+                vga_nxt.vsync   = vga_draw.vsync;
+                rgb_nxt         = rgb_draw;
+            end
             default: begin
                 vga_nxt.hcount  = vga_in.hcount;
                 vga_nxt.vcount  = vga_in.vcount;
@@ -97,6 +124,33 @@ draw_error u_draw_error(
     .vga_in,
     .vga_out(vga_error),
     .rgb_o(rgb_error)
+);
+
+draw_win u_draw_win(
+    .clk,
+    .rst,
+
+    .vga_in,
+    .vga_out(vga_win),
+    .rgb_o(rgb_win)
+);
+
+draw_lose u_draw_lose(
+    .clk,
+    .rst,
+
+    .vga_in,
+    .vga_out(vga_lose),
+    .rgb_o(rgb_lose)
+);
+
+draw_draw u_draw_draw(
+    .clk,
+    .rst,
+
+    .vga_in,
+    .vga_out(vga_draw),
+    .rgb_o(rgb_draw)
 );
 
 endmodule

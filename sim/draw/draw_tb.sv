@@ -64,7 +64,7 @@ vga_timing u_vga_timing(
 draw dut (
     .clk,
     .rst,
-    .mode(ERROR),
+    .mode(DRAW),
     .vga_in,
     .vga_out,
     .rgb

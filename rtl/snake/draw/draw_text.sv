@@ -15,6 +15,9 @@ module draw_text #(
     2 - "   ustawienia   "
     3 - "BLAD: polaczenie"
     4 - "  wroc do menu  "
+    5 - "   ZWYCIESTWO   "
+    6 - "    PORAZKA     "
+    7 - "     REMIS      "
     */
     parameter TEXT_DISP=0
 )(
@@ -58,7 +61,7 @@ font_rom u_font_rom (
 
 
 // all texts possible
-logic [6:0] one_player, two_players, settings, conn_error, back_to_menu;
+logic [6:0] one_player, two_players, settings, conn_error, back_to_menu, s_win, s_lose, s_draw;
 
 txt_one_player u_text0 (
     .clk,
@@ -90,6 +93,24 @@ txt_back_to_menu u_text4 (
     .char_xy
 );
 
+txt_win u_text5 (
+    .clk,
+    .char_code(s_win),
+    .char_xy
+);
+
+txt_lose u_text6 (
+    .clk,
+    .char_code(s_lose),
+    .char_xy
+);
+
+txt_draw u_text7 (
+    .clk,
+    .char_code(s_draw),
+    .char_xy
+);
+
 always_comb begin
     case(TEXT_DISP)
         0:          char_code = one_player;
@@ -97,6 +118,9 @@ always_comb begin
         2:          char_code = settings;
         3:          char_code = conn_error;
         4:          char_code = back_to_menu;
+        5:          char_code = s_win;
+        6:          char_code = s_lose;
+        7:          char_code = s_draw;
 
         default:    char_code = one_player;
     endcase

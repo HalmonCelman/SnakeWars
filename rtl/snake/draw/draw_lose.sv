@@ -4,9 +4,9 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 
 import snake_pkg::*;
 
-module draw_error
+module draw_lose
 #(
-    parameter BG_COLOR   = 12'hF00,
+    parameter BG_COLOR   = 12'h222,
     parameter RECT_COLOR = 12'h0F0 
 )(
     input wire clk,
@@ -20,13 +20,13 @@ module draw_error
 vga_if rect();
 logic [RGB_B-1:0] rgb_r; 
 vga_if text1();
-logic [RGB_B-1:0] rgb_t1; 
+logic [RGB_B-1:0] rgb_t1, rgb_t2; 
 
 draw_text #(
-    .X(ERROR_TXT_X),
-    .Y(ERROR_TXT_Y),
-    .TEXT_DISP(3),
-    .FONT_COLOR(12'hFFF)
+    .X(END_TXT_X),
+    .Y(END_TXT_Y),
+    .TEXT_DISP(6),
+    .FONT_COLOR(12'hF00)
 ) u_draw_text1 (
     .clk,
     .rst,

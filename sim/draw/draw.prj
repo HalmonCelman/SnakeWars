@@ -16,6 +16,12 @@ sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/snake/draw/rom/texts/txt_settings.sv \
         ../../rtl/snake/draw/rom/texts/txt_connection_error.sv \
         ../../rtl/snake/draw/rom/texts/txt_back_to_menu.sv \
+        ../../rtl/snake/draw/rom/texts/txt_win.sv \
+        ../../rtl/snake/draw/rom/texts/txt_lose.sv \
+        ../../rtl/snake/draw/rom/texts/txt_draw.sv \
         ../../rtl/snake/draw/draw_error.sv \
+        ../../rtl/snake/draw/draw_win.sv \
+        ../../rtl/snake/draw/draw_lose.sv \
+        ../../rtl/snake/draw/draw_draw.sv \
         ../common/tiff_writer.sv \
         draw_tb.sv

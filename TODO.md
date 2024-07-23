@@ -14,8 +14,8 @@
     - (X) rysowanie prostokątów
     - (X) rysowanie tekstu
 - (X) rysowanie ekranu błędu
-- ( ) rysowanie ekranu końcowego
-- ( ) rysowanie mapy, punktu oraz ilości puktów graczy 
+- (X) rysowanie ekranu końcowego
+- ( ) rysowanie mapy i punktu 
 
 ## Część 2 - sterowanie
 - ( ) sprawdzić działanie myszy( przycisk prawy i lewy - reszta jest zbędna na razie)

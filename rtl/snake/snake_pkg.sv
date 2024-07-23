@@ -8,7 +8,9 @@ typedef enum {
     MENU,
     ERROR,
     GAME,
-    ENDSCR
+    WIN,
+    LOSE,
+    DRAW
 } game_mode;
 
 import vga_pkg::*;
@@ -30,5 +32,10 @@ localparam ERROR_TXT_X = HOR_PIXELS/2-64;
 localparam ERROR_TXT_Y = VER_PIXELS*3/14-8;
 
 localparam BUTTONE_Y = VER_PIXELS*5/7;
+
+// endscreen options
+localparam END_TXT_X = HOR_PIXELS/2-64;
+localparam END_TXT_Y = VER_PIXELS*3/14-8;
+localparam BUTTONEND_Y = VER_PIXELS*5/7;
 
 endpackage
