@@ -18,8 +18,8 @@ module draw(
 vga_if vga_nxt();
 logic [RGB_B-1:0] rgb_nxt;
 
-vga_if vga_menu();
-logic [RGB_B-1:0] rgb_menu;
+vga_if vga_menu(), vga_error();
+logic [RGB_B-1:0] rgb_menu, rgb_error;
 
 always_ff @(posedge clk) begin
     if(rst) begin
@@ -56,6 +56,15 @@ always_comb begin
                 vga_nxt.vsync   = vga_menu.vsync;
                 rgb_nxt         = rgb_menu;
             end
+            ERROR: begin
+                vga_nxt.hcount  = vga_error.hcount;
+                vga_nxt.vcount  = vga_error.vcount;
+                vga_nxt.hblnk   = vga_error.hblnk;
+                vga_nxt.vblnk   = vga_error.vblnk;
+                vga_nxt.hsync   = vga_error.hsync;
+                vga_nxt.vsync   = vga_error.vsync;
+                rgb_nxt         = rgb_error;
+            end
             default: begin
                 vga_nxt.hcount  = vga_in.hcount;
                 vga_nxt.vcount  = vga_in.vcount;
@@ -81,5 +90,13 @@ draw_menu u_draw_menu(
     .rgb_o(rgb_menu)
 );
 
+draw_error u_draw_error(
+    .clk,
+    .rst,
+
+    .vga_in,
+    .vga_out(vga_error),
+    .rgb_o(rgb_error)
+);
 
 endmodule

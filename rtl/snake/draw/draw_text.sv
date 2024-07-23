@@ -4,7 +4,20 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 
 import vga_pkg::*;
 
-module draw_text(
+module draw_text #(
+    parameter X=0,
+    parameter Y=0,
+    parameter FONT_COLOR=12'h000,
+    /*
+    TEXT_DISP - text to be displayed(one line, 16 characters)
+    0 - "gra jednoosobowa"
+    1 - " gra dwuosobowa "
+    2 - "   ustawienia   "
+    3 - "BLAD: polaczenie"
+    4 - "  wroc do menu  "
+    */
+    parameter TEXT_DISP=0
+)(
     input wire clk,
     input wire rst,
 
@@ -20,8 +33,11 @@ logic [6:0] char_code;
 logic [7:0] char_pixels;
 
 draw_rect_char #(
-    .X(200),
-    .Y(50)
+    .X(X),
+    .Y(Y),
+    .FONT_COLOR(FONT_COLOR),
+    .NUMBER_OF_LINES(1),
+    .CHARS_IN_LINE(16)
 ) u_draw_rect_char (
     .clk,
     .rst,
@@ -40,10 +56,50 @@ font_rom u_font_rom (
     .char_line_pixels(char_pixels)
 );
 
-char_rom_16x16 u_char_rom_16x16 (
+
+// all texts possible
+logic [6:0] one_player, two_players, settings, conn_error, back_to_menu;
+
+txt_one_player u_text0 (
     .clk,
-    .char_code,
+    .char_code(one_player),
     .char_xy
 );
+
+txt_two_players u_text1 (
+    .clk,
+    .char_code(two_players),
+    .char_xy
+);
+
+txt_settings u_text2 (
+    .clk,
+    .char_code(settings),
+    .char_xy
+);
+
+txt_connection_error u_text3 (
+    .clk,
+    .char_code(conn_error),
+    .char_xy
+);
+
+txt_back_to_menu u_text4 (
+    .clk,
+    .char_code(back_to_menu),
+    .char_xy
+);
+
+always_comb begin
+    case(TEXT_DISP)
+        0:          char_code = one_player;
+        1:          char_code = two_players;
+        2:          char_code = settings;
+        3:          char_code = conn_error;
+        4:          char_code = back_to_menu;
+
+        default:    char_code = one_player;
+    endcase
+end
 
 endmodule

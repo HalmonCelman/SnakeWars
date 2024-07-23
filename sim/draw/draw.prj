@@ -11,6 +11,11 @@ sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/snake/draw/draw_text.sv \
         ../../rtl/snake/draw/draw_rect_char.sv \
         ../../rtl/snake/draw/rom/font_rom.sv \
-        ../../rtl/snake/draw/rom/char_rom_16x16.sv \
+        ../../rtl/snake/draw/rom/texts/txt_one_player.sv \
+        ../../rtl/snake/draw/rom/texts/txt_two_players.sv \
+        ../../rtl/snake/draw/rom/texts/txt_settings.sv \
+        ../../rtl/snake/draw/rom/texts/txt_connection_error.sv \
+        ../../rtl/snake/draw/rom/texts/txt_back_to_menu.sv \
+        ../../rtl/snake/draw/draw_error.sv \
         ../common/tiff_writer.sv \
         draw_tb.sv

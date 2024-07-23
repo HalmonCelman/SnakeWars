@@ -10,10 +10,10 @@
 - ( ) zmienić reset asynchroniczny w modułach na synchroniczny
 
 ## Część 1 - rysowanie - maszyna stanów
-- ( ) rysowanie menu
+- (X) rysowanie menu
     - (X) rysowanie prostokątów
     - (X) rysowanie tekstu
-- ( ) rysowanie ekranu błędu
+- (X) rysowanie ekranu błędu
 - ( ) rysowanie ekranu końcowego
 - ( ) rysowanie mapy, punktu oraz ilości puktów graczy 
 
