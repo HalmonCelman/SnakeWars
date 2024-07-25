@@ -5,6 +5,7 @@ sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/vga/vga_timing.sv \
         ../../rtl/utils/delay.sv \
         ../../rtl/snake/snake_pkg.sv \
+        ../../rtl/snake/map_if.sv \
         ../../rtl/snake/draw/draw.sv \
         ../../rtl/snake/draw/draw_menu.sv \
         ../../rtl/snake/draw/draw_rect.sv \
@@ -23,5 +24,6 @@ sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/snake/draw/draw_win.sv \
         ../../rtl/snake/draw/draw_lose.sv \
         ../../rtl/snake/draw/draw_draw.sv \
+        ../../rtl/snake/draw/draw_game.sv \
         ../common/tiff_writer.sv \
         draw_tb.sv

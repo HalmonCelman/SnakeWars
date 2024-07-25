@@ -51,7 +51,7 @@ end
  */
 
 //connections
-import vga_pkg::*;
+map_if map();
 vga_if vga_in(), vga_out();
 logic [RGB_B-1:0] rgb;
 
@@ -64,7 +64,8 @@ vga_timing u_vga_timing(
 draw dut (
     .clk,
     .rst,
-    .mode(DRAW),
+    .map,
+    .mode(GAME),
     .vga_in,
     .vga_out,
     .rgb
@@ -94,6 +95,14 @@ tiff_writer #(
  */
 
 initial begin
+    // setup map for testing
+    map.tiles[1][0]=EMPTY;
+    map.tiles[1][1]=WALL;
+    map.tiles[1][2]=SNAKE1;
+    map.tiles[1][3]=SNAKE2;
+    map.tiles[1][4]=POINT;
+
+
     rst = 1'b0;
     # 30 rst = 1'b1;
     # 30 rst = 1'b0;

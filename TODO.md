@@ -5,8 +5,8 @@
 - (X) dostosować vga do nowej częstotliwości
 - ( ) dostosować mysz do nowej częstotliwości
 - ( ) dostosować uart do nowej częstotliwości
-- ( ) stworzyć interfejs mapy
-- ( ) stworzyć interfejs snake'a
+- (X) stworzyć interfejs mapy
+- (X) stworzyć interfejs snake'a
 - ( ) zmienić reset asynchroniczny w modułach na synchroniczny
 
 ## Część 1 - rysowanie - maszyna stanów
@@ -15,7 +15,7 @@
     - (X) rysowanie tekstu
 - (X) rysowanie ekranu błędu
 - (X) rysowanie ekranu końcowego
-- ( ) rysowanie mapy i punktu 
+- (x) rysowanie mapy i punktu 
 
 ## Część 2 - sterowanie
 - ( ) sprawdzić działanie myszy( przycisk prawy i lewy - reszta jest zbędna na razie)

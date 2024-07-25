@@ -3,6 +3,7 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
 
 package snake_pkg;
+import vga_pkg::*;
 
 typedef enum { 
     MENU,
@@ -13,7 +14,36 @@ typedef enum {
     DRAW
 } game_mode;
 
-import vga_pkg::*;
+typedef enum { 
+    NONE,
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT
+} direction;
+
+// snake & map settings
+localparam MAX_SNAKE_LENGTH = 15;
+
+localparam MAP_WIDTH = 64;
+localparam MAP_HEIGHT = 48;
+
+typedef enum { 
+    EMPTY,
+    WALL,
+    SNAKE1,
+    SNAKE2,
+    POINT
+} tile;
+
+localparam TILE_SIZE = HOR_PIXELS/MAP_WIDTH;
+
+// colors
+localparam TILE_EMPTY_COLOR = 12'hAAA;
+localparam TILE_WALL_COLOR  = 12'h000;
+localparam TILE_SNAKE1_COLOR = 12'h00F;
+localparam TILE_SNAKE2_COLOR = 12'hF00;
+localparam TILE_POINT_COLOR = 12'hFF0;
 
 // menu options
 localparam BUTTONS_X = HOR_PIXELS*2/5;
