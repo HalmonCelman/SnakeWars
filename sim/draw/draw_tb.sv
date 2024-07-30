@@ -55,6 +55,8 @@ map_if map();
 vga_if vga_in(), vga_out();
 logic [RGB_B-1:0] rgb;
 
+game_mode mode;
+
 vga_timing u_vga_timing(
     .clk,
     .rst,
@@ -65,7 +67,9 @@ draw dut (
     .clk,
     .rst,
     .map,
-    .mode(GAME),
+    .mouse_x(12'd20),
+    .mouse_y(12'd20),
+    .mode,
     .vga_in,
     .vga_out,
     .rgb
@@ -104,6 +108,7 @@ initial begin
 
 
     rst = 1'b0;
+    mode = MENU;
     # 30 rst = 1'b1;
     # 30 rst = 1'b0;
 
@@ -114,7 +119,16 @@ initial begin
     wait (vs == 1'b0);
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     @(negedge vs) $display("Info: negedge VS at %t",$time);
-
+    mode = ERROR;
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
+    mode = WIN;
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
+    mode = LOSE;
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
+    mode = DRAW;
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
+    mode = GAME;
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
     // End the simulation.
     $display("Simulation is over, check the waveforms.");
     $finish;

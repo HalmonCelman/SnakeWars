@@ -15,6 +15,7 @@
     - (X) rysowanie tekstu
 - (X) rysowanie ekranu błędu
 - (X) rysowanie ekranu końcowego
+- (X) rysowanie myszki na ekrananie menu, błędu i końcowym
 - (x) rysowanie mapy i punktu 
 
 ## Część 2 - sterowanie

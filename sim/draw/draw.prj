@@ -25,5 +25,8 @@ sv work ../../rtl/vga/vga_if.sv \
         ../../rtl/snake/draw/draw_lose.sv \
         ../../rtl/snake/draw/draw_draw.sv \
         ../../rtl/snake/draw/draw_game.sv \
+        ../../rtl/snake/draw/draw_mouse.sv \
         ../common/tiff_writer.sv \
         draw_tb.sv
+
+vhdl work ../../rtl/mouse/MouseDisplay.vhd

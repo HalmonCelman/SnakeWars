@@ -12,6 +12,9 @@ module draw(
 
     map_if.in map,
 
+    input logic [11:0] mouse_x,
+    input logic [11:0] mouse_y, 
+
     vga_if.in vga_in,
     vga_if.out vga_out,
     output logic [RGB_B-1:0] rgb
@@ -117,52 +120,81 @@ end
 
 
 // all submodules connected below
-draw_menu u_draw_menu(
+localparam SUM_DELAY=17; //paths should have same amount of flip flop delays
+
+draw_menu #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_menu(
     .clk,
     .rst,
+
+    .mouse_x,
+    .mouse_y,
 
     .vga_in,
     .vga_out(vga_menu),
     .rgb_o(rgb_menu)
 );
 
-draw_error u_draw_error(
+draw_error #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_error(
     .clk,
     .rst,
+
+    .mouse_x,
+    .mouse_y,
 
     .vga_in,
     .vga_out(vga_error),
     .rgb_o(rgb_error)
 );
 
-draw_win u_draw_win(
+draw_win #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_win(
     .clk,
     .rst,
+
+    .mouse_x,
+    .mouse_y,
 
     .vga_in,
     .vga_out(vga_win),
     .rgb_o(rgb_win)
 );
 
-draw_lose u_draw_lose(
+draw_lose #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_lose(
     .clk,
     .rst,
+
+    .mouse_x,
+    .mouse_y,
 
     .vga_in,
     .vga_out(vga_lose),
     .rgb_o(rgb_lose)
 );
 
-draw_draw u_draw_draw(
+draw_draw #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_draw(
     .clk,
     .rst,
 
+    .mouse_x,
+    .mouse_y,
+    
     .vga_in,
     .vga_out(vga_draw),
     .rgb_o(rgb_draw)
 );
 
-draw_game u_draw_game(
+draw_game #(
+    .SUM_DELAY(SUM_DELAY)
+) u_draw_game(
     .clk,
     .rst,
     

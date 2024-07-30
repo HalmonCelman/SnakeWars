@@ -4,7 +4,9 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 
 import snake_pkg::*;
 
-module draw_game
+module draw_game #(
+    parameter SUM_DELAY  = 2 
+)
 (
     input wire clk,
     input wire rst,
@@ -16,21 +18,22 @@ module draw_game
     output logic [RGB_B-1:0] rgb_o 
 );
 
-logic [RGB_B-1:0] rgb_nxt;
+vga_if vga_delay();
+logic [RGB_B-1:0] rgb_nxt, rgb_d;
 
 always_ff @(posedge clk) begin
     if(rst) begin
         rgb_o <= '0;
     end else begin
-        rgb_o <= rgb_nxt;
+        rgb_o <= rgb_d;
     end
 
-    vga_out.hcount <= vga_in.hcount;
-    vga_out.vcount <= vga_in.vcount;
-    vga_out.hblnk  <= vga_in.hblnk;
-    vga_out.vblnk  <= vga_in.vblnk;
-    vga_out.hsync  <= vga_in.hsync;
-    vga_out.vsync  <= vga_in.vsync;
+    vga_out.hcount <= vga_delay.hcount;
+    vga_out.vcount <= vga_delay.vcount;
+    vga_out.hblnk  <= vga_delay.hblnk;
+    vga_out.vblnk  <= vga_delay.vblnk;
+    vga_out.hsync  <= vga_delay.hsync;
+    vga_out.vsync  <= vga_delay.vsync;
 end
 
 always_comb begin
@@ -43,5 +46,16 @@ always_comb begin
         default:    rgb_nxt=TILE_EMPTY_COLOR;
     endcase
 end
+
+delay
+#(
+    .CLK_DEL(SUM_DELAY-1),
+    .WIDTH(38)
+) u_delay_vga(
+    .clk,
+    .rst,
+    .din ({vga_in.hcount,    vga_in.vcount,    vga_in.hblnk,    vga_in.vblnk,    vga_in.hsync,    vga_in.vsync,    rgb_nxt}),
+    .dout({vga_delay.hcount, vga_delay.vcount, vga_delay.hblnk, vga_delay.vblnk, vga_delay.hsync, vga_delay.vsync, rgb_d})
+);
 
 endmodule
