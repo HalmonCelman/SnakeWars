@@ -34,12 +34,35 @@ set xdc_files {
 set sv_files {
     rtl/top_basys3.sv
     ../rtl/mouse/mouse_control.sv
+    ../rtl/snake/draw/draw_draw.sv
+    ../rtl/snake/draw/draw_error.sv
+    ../rtl/snake/draw/draw_game.sv
+    ../rtl/snake/draw/draw_lose.sv
+    ../rtl/snake/draw/draw_menu.sv
+    ../rtl/snake/draw/draw_mouse.sv
+    ../rtl/snake/draw/draw_rect_char.sv
+    ../rtl/snake/draw/draw_rect.sv
+    ../rtl/snake/draw/draw_text.sv
+    ../rtl/snake/draw/draw_win.sv
+    ../rtl/snake/draw/draw.sv
+    ../rtl/snake/draw/rom/font_rom.sv
+    ../rtl/snake/draw/rom/texts/txt_back_to_menu.sv
+    ../rtl/snake/draw/rom/texts/txt_connection_error.sv
+    ../rtl/snake/draw/rom/texts/txt_draw.sv
+    ../rtl/snake/draw/rom/texts/txt_lose.sv
+    ../rtl/snake/draw/rom/texts/txt_one_player.sv
+    ../rtl/snake/draw/rom/texts/txt_settings.sv
+    ../rtl/snake/draw/rom/texts/txt_two_players.sv
+    ../rtl/snake/draw/rom/texts/txt_win.sv
     ../rtl/snake/collisions.sv
     ../rtl/snake/communicate.sv
-    ../rtl/snake/draw.sv
     ../rtl/snake/generate_point.sv
+    ../rtl/snake/map_if.sv
+    ../rtl/snake/snake_if.sv
+    ../rtl/snake/snake_pkg.sv
     ../rtl/uart/get_memory.sv
     ../rtl/uart/make_numbers.sv
+    ../rtl/utils/delay.sv
     ../rtl/vga/vga_if.sv
     ../rtl/vga/vga_pkg.sv
     ../rtl/vga/vga_timing.sv
