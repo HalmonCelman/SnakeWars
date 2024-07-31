@@ -1,6 +1,6 @@
 module mouse_control(
     input logic clk100MHz,
-    input logic clk40MHz,
+    input logic clk75MHz,
     input logic rst,
     inout logic ps2_clk,
     inout logic ps2_data,
@@ -32,7 +32,7 @@ MouseCtl u_MouseCtl (
     .new_event()
 );
 
-always_ff @(posedge clk40MHz) begin
+always_ff @(posedge clk75MHz) begin
     if(rst) begin
         x <= '0;
         y <= '0;
