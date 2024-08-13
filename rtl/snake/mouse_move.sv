@@ -15,9 +15,9 @@ module mouse_move(
 );
 
 direction dir_nxt;
-logic clk_dir_prev;
+logic clk_div_prev;
 
-typedef enum state logic{WAIT_MOUSE, WAIT_READ} STATE_T;
+typedef enum logic {WAIT_MOUSE, WAIT_READ} STATE_T;
 
 STATE_T state, state_nxt;
 
@@ -38,7 +38,7 @@ always_comb begin
     
     case(state)
         WAIT_MOUSE: begin
-            if(left or right) begin
+            if(left | right) begin
                 
                 case(dir)
                     UP:         dir_nxt = left ? LEFT : RIGHT;
@@ -59,11 +59,10 @@ always_comb begin
         WAIT_READ: begin
             dir_nxt = dir;
 
-            if(clk_div_prev == 1 && clk_div == 0) begin
-                state_nxt = WAIT_READ;
-            
-            end else begin
+            if(clk_div_prev == 1 && clk_divided == 0) begin
                 state_nxt = WAIT_MOUSE;
+            end else begin
+                state_nxt = WAIT_READ;
             end
         end
 

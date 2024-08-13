@@ -48,7 +48,7 @@ typedef enum {
 } tile;
 
 typedef struct {
-    direction segments[MAX_SNAKE_LENGTH];
+    direction segments[MAX_SNAKE_LENGTH-1];
     bit [LENGTH_BITS-1:0] length;
     bit [WIDTH_BITS-1:0]  head_x;
     bit [HEIGHT_BITS-1:0] head_y;
