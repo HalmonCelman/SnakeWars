@@ -10,7 +10,7 @@ module draw(
     input wire rst,
     input game_mode mode,
 
-    map_if.in map,
+    input map_s map,
 
     input logic [11:0] mouse_x,
     input logic [11:0] mouse_y, 

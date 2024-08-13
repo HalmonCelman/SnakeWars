@@ -3,7 +3,7 @@
 ## Część 0 - przygotowanie
 - (X) wybrać i wygenerować zegar pasujący do vga zgodnie z ["tą stroną"](http://martin.hinner.info/vga/timing.html) - proponuje 75MHz
 - (X) dostosować vga do nowej częstotliwości
-- ( ) dostosować mysz do nowej częstotliwości
+- (X) dostosować mysz do nowej częstotliwości
 - ( ) dostosować uart do nowej częstotliwości
 - (X) stworzyć interfejs mapy
 - (X) stworzyć interfejs snake'a
@@ -35,6 +35,6 @@
 
 ## Część 5 - kolizje i ruch
 - ( ) stworzyć dzielnik zegara który da zegar co pół sekundy
-- ( ) dodać poruszanie snakiem po mapie - przyjmuje direction, wygenerowany powyżej zegar i mapę - oddaje mapę do modułu rysującego
+- (X) dodać poruszanie snakiem po mapie - przyjmuje direction, wygenerowany powyżej zegar oddaje mapę do modułu rysującego
 - ( ) dodać warunki odnośnie ruchu - jeśli ma się ruszyć w miejsce zabronione to wysłać informację o kolizji
 - ( ) dodać warunek odnośnie kolizji z punktem - informacja point

@@ -1,0 +1,34 @@
+# Authors: Krzysztof Korbaś, Emilia Jerdanek
+
+sv work ../../rtl/vga/vga_if.sv \
+        ../../rtl/vga/vga_pkg.sv \
+        ../../rtl/vga/vga_timing.sv \
+        ../../rtl/utils/delay.sv \
+        ../../rtl/snake/snake_pkg.sv \
+        ../../rtl/snake/map_if.sv \
+        ../../rtl/snake/draw/draw.sv \
+        ../../rtl/snake/draw/draw_menu.sv \
+        ../../rtl/snake/draw/draw_rect.sv \
+        ../../rtl/snake/draw/draw_text.sv \
+        ../../rtl/snake/draw/draw_rect_char.sv \
+        ../../rtl/snake/draw/rom/font_rom.sv \
+        ../../rtl/snake/draw/rom/texts/txt_one_player.sv \
+        ../../rtl/snake/draw/rom/texts/txt_two_players.sv \
+        ../../rtl/snake/draw/rom/texts/txt_settings.sv \
+        ../../rtl/snake/draw/rom/texts/txt_connection_error.sv \
+        ../../rtl/snake/draw/rom/texts/txt_back_to_menu.sv \
+        ../../rtl/snake/draw/rom/texts/txt_win.sv \
+        ../../rtl/snake/draw/rom/texts/txt_lose.sv \
+        ../../rtl/snake/draw/rom/texts/txt_draw.sv \
+        ../../rtl/snake/draw/draw_error.sv \
+        ../../rtl/snake/draw/draw_win.sv \
+        ../../rtl/snake/draw/draw_lose.sv \
+        ../../rtl/snake/draw/draw_draw.sv \
+        ../../rtl/snake/draw/draw_game.sv \
+        ../../rtl/snake/draw/draw_mouse.sv \
+        ../../rtl/snake/move.sv \
+        ../../rtl/utils/clk_div.sv \
+        ../common/tiff_writer.sv \
+        move_tb.sv
+
+vhdl work ../../rtl/mouse/MouseDisplay.vhd

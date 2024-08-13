@@ -11,7 +11,7 @@ module draw_game #(
     input wire clk,
     input wire rst,
 
-    map_if.in map,
+    input map_s map,
 
     vga_if.in vga_in,
     vga_if.out vga_out,

@@ -18,7 +18,7 @@ module top (
     inout wire mouse_data
 );
 
-map_if map();
+map_s map;
 vga_if vga_in(), vga_out();
 logic [11:0] mouse_x, mouse_y;
 
@@ -37,16 +37,32 @@ draw u_draw (
     .map,
     .mouse_x,
     .mouse_y,
-    .mode(MENU),
+    .mode(GAME),
     .vga_in,
     .vga_out,
     .rgb
+);
+
+logic clk_divided;
+
+clk_div u_clk_div(
+    .clk,
+    .rst,
+    .clk_divided
+);
+
+move u_move (
+    .clk(clk_divided),
+    .rst,
+    .dir(LEFT),
+    .map
 );
 
 mouse_control u_mouse_control(
     .clk100MHz,
     .clk75MHz(clk),
     .rst,
+    .left(),
     .ps2_clk(mouse_clk),
     .ps2_data(mouse_data),
     .x(mouse_x),

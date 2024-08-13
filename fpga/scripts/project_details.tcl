@@ -54,15 +54,15 @@ set sv_files {
     ../rtl/snake/draw/rom/texts/txt_settings.sv
     ../rtl/snake/draw/rom/texts/txt_two_players.sv
     ../rtl/snake/draw/rom/texts/txt_win.sv
+    ../rtl/snake/move.sv
     ../rtl/snake/collisions.sv
     ../rtl/snake/communicate.sv
     ../rtl/snake/generate_point.sv
-    ../rtl/snake/map_if.sv
-    ../rtl/snake/snake_if.sv
     ../rtl/snake/snake_pkg.sv
     ../rtl/uart/get_memory.sv
     ../rtl/uart/make_numbers.sv
     ../rtl/utils/delay.sv
+    ../rtl/utils/clk_div.sv
     ../rtl/vga/vga_if.sv
     ../rtl/vga/vga_pkg.sv
     ../rtl/vga/vga_timing.sv
