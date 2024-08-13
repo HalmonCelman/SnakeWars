@@ -21,6 +21,7 @@ module top (
 map_s map;
 vga_if vga_in(), vga_out();
 logic [11:0] mouse_x, mouse_y;
+logic dir_int, left_int, right_int;
 
 assign hsync = vga_out.hsync;
 assign vsync = vga_out.vsync;
@@ -54,15 +55,25 @@ clk_div u_clk_div(
 move u_move (
     .clk(clk_divided),
     .rst,
-    .dir(LEFT),
+    .dir(dir_int),
     .map
+);
+
+move u_mouse_move (
+    .clk,
+    .clk_divided,
+    .rst,
+    .left(left_int),
+    .right(right_int),
+    .dir(dir_int),
 );
 
 mouse_control u_mouse_control(
     .clk100MHz,
     .clk75MHz(clk),
     .rst,
-    .left(),
+    .left(left_int),
+    .right(right_int),
     .ps2_clk(mouse_clk),
     .ps2_data(mouse_data),
     .x(mouse_x),
