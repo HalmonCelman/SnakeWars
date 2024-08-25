@@ -73,15 +73,18 @@ draw u_draw (
     .rgb
 );
 
-logic clk_move;
+logic clk_move, rcvdir;
 direction dir;
 
 move u_move (
     .clk,
     .clk_div(clk_move),
     .rst,
-    .dir,
-    .map
+    .dir1(dir),
+    .dir2(dir),
+    .rcvdir,
+    .map,
+    .com_err()
 );
 
 always_comb begin
@@ -116,28 +119,40 @@ initial begin
     $display("completes, use the menu option to run all.");
     $display("Prepare to wait a long time...");
 
+    rcvdir = 1'b0;
+
     wait (vs == 1'b0);
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     dir = LEFT;
-    clk_move = 1'b1; 
-    #30 clk_move = 1'b0; 
+    clk_move = 1'b1;
+    rcvdir = 1'b1;
+
+    #30 clk_move = 1'b0; rcvdir = 1'b0; 
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     dir = UP;
-    clk_move = 1'b1; 
-    #30 clk_move = 1'b0; 
+    clk_move = 1'b1;
+    rcvdir = 1'b1;
+    #30 clk_move = 1'b0; rcvdir = 1'b0; 
+
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     dir = RIGHT;
-    clk_move = 1'b1; 
-    #30 clk_move = 1'b0; 
+    clk_move = 1'b1;
+    rcvdir = 1'b1; 
+    #30 clk_move = 1'b0; rcvdir = 1'b0; 
+
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     dir = DOWN;
-    clk_move = 1'b1; 
-    #30 clk_move = 1'b0; 
+    clk_move = 1'b1;
+    rcvdir = 1'b1; 
+    #30 clk_move = 1'b0; rcvdir = 1'b0; 
+ 
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     dir = NONE;
-    clk_move = 1'b1; 
-    #30 clk_move = 1'b0; 
+    clk_move = 1'b1;
+    rcvdir = 1'b1; 
+    #30 clk_move = 1'b0; rcvdir = 1'b0; 
+
     @(negedge vs) $display("Info: negedge VS at %t",$time);
     // End the simulation.
     $display("Simulation is over, check the waveforms.");

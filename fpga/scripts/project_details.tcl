@@ -60,8 +60,6 @@ set sv_files {
     ../rtl/snake/communicate.sv
     ../rtl/snake/generate_point.sv
     ../rtl/snake/snake_pkg.sv
-    ../rtl/uart/get_memory.sv
-    ../rtl/uart/make_numbers.sv
     ../rtl/utils/delay.sv
     ../rtl/utils/clk_div.sv
     ../rtl/vga/vga_if.sv
@@ -78,6 +76,7 @@ set verilog_files {
     ../rtl/uart/uart_tx.v
     ../rtl/uart/uart.v
     ../rtl/utils/fifo.v
+    ../rtl/utils/mod_m_counter.v
 }
 
 # Specify VHDL design files location            -- EDIT

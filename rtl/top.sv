@@ -9,7 +9,9 @@ module top (
     input  wire clk100MHz,
     input  wire clk,
     input  wire rst,
+    input  wire rx,
     
+    output logic tx,
     output logic hsync,
     output logic vsync,
     output logic [RGB_B-1:0] rgb,
@@ -21,8 +23,9 @@ module top (
 map_s map;
 vga_if vga_in(), vga_out();
 logic [11:0] mouse_x, mouse_y;
-direction dir_int;
+direction dir_int, dir2_int;
 logic left_int, right_int;
+logic rcvdir;
 
 assign hsync = vga_out.hsync;
 assign vsync = vga_out.vsync;
@@ -57,8 +60,11 @@ move u_move (
     .clk,
     .clk_div(clk_divided),
     .rst,
-    .dir(dir_int),
-    .map
+    .dir1(dir_int),
+    .dir2(dir2_int),
+    .rcvdir,
+    .map,
+    .com_err()
 );
 
 mouse_move u_mouse_move (
@@ -80,6 +86,17 @@ mouse_control u_mouse_control(
     .ps2_data(mouse_data),
     .x(mouse_x),
     .y(mouse_y)
+);
+
+communicate u_communicate(
+    .clk,
+    .rst,
+    .rx,
+    .send(clk_divided),
+    .tx,
+    .dir1(dir_int),
+    .dir2(dir2_int),
+    .rcvdir
 );
 
 endmodule
