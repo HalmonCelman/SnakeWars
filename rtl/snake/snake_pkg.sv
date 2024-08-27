@@ -18,10 +18,10 @@ localparam HEIGHT_BITS = 6;
 
 // move options
 localparam START_LENGTH = 3;
-localparam START_POS_X = MAP_WIDTH - 2;
-localparam START_POS_Y = MAP_HEIGHT - START_LENGTH - 1;
-localparam START_POS_X_2 = 1; // enemy snake
-localparam START_POS_Y_2 = 1;
+localparam START_POS_X = MAP_WIDTH - 3;
+localparam START_POS_Y = MAP_HEIGHT - START_LENGTH - 2;
+localparam START_POS_X_2 = 2; // enemy snake
+localparam START_POS_Y_2 = 2;
 
 typedef enum bit[2:0] { 
     MENU,
