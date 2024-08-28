@@ -1,5 +1,7 @@
 `timescale 1 ns / 1 ps
 
+import vga_pkg::*;
+
 module draw_rect_char
 #(
     parameter X=0,

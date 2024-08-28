@@ -2,6 +2,8 @@
 Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
 
+import vga_pkg::*;
+
 `timescale 1 ns / 1 ps
 
 module draw_rect 

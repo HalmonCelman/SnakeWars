@@ -21,6 +21,9 @@ localparam START_LENGTH = 3;
 localparam START_POS_X = MAP_WIDTH - 2;
 localparam START_POS_Y = MAP_HEIGHT - START_LENGTH - 1;
 
+localparam START_POS_X_2 = 1;
+localparam START_POS_Y_2 = 1;
+
 
 typedef enum bit[2:0] { 
     MENU,

@@ -20,6 +20,7 @@
 `timescale 1 ns / 1 ps
 
 import snake_pkg::*;
+import vga_pkg::*;
 
 module move_tb;
 /**

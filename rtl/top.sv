@@ -4,6 +4,7 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 `timescale 1 ns / 1 ps
 
 import snake_pkg::*;
+import vga_pkg::*;
 
 module top (
     input  wire clk100MHz,
@@ -18,7 +19,7 @@ module top (
     inout wire mouse_data
 );
 
-map_s map;
+map_s map_move_gen_p, map_gen_p_draw;
 vga_if vga_in(), vga_out();
 logic [11:0] mouse_x, mouse_y;
 direction dir_int;
@@ -36,7 +37,7 @@ vga_timing u_vga_timing(
 draw u_draw (
     .clk,
     .rst,
-    .map,
+    .map(map_gen_p_draw),
     .mouse_x,
     .mouse_y,
     .mode(GAME),
@@ -58,7 +59,16 @@ move u_move (
     .clk_div(clk_divided),
     .rst,
     .dir(dir_int),
-    .map
+    .map(map_move_gen_p)
+);
+
+generate_point u_generate_point(
+    .clk_75(clk),
+    .clk_div(clk_divided),
+    .rst(rst),
+    .mode(GAME),
+    .map_in(map_move_gen_p),
+    .map_out(map_gen_p_draw)
 );
 
 mouse_move u_mouse_move (

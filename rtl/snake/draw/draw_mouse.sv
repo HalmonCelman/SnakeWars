@@ -1,6 +1,7 @@
 /*
 Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
+import vga_pkg::*;
 
 module draw_mouse
 (

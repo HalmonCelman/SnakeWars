@@ -4,6 +4,8 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 
 import vga_pkg::*;
 
+import vga_pkg::*;
+
 module draw_text #(
     parameter X=0,
     parameter Y=0,

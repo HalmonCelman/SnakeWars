@@ -3,6 +3,7 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
 
 import snake_pkg::*;
+import vga_pkg::*;
 
 module draw_game #(
     parameter SUM_DELAY  = 2 

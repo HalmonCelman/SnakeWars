@@ -2,6 +2,8 @@
 Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
 
+import vga_pkg::*;
+
 import snake_pkg::*;
 
 module draw_win

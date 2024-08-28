@@ -3,6 +3,7 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 */
 
 import snake_pkg::*;
+import vga_pkg::*;
 
 module draw_lose
 #(
