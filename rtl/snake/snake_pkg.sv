@@ -67,7 +67,7 @@ localparam TILE_SIZE = HOR_PIXELS/MAP_WIDTH;
 
 // colors
 localparam TILE_EMPTY_COLOR = 12'hAAA;
-localparam TILE_WALL_COLOR  = 12'h000;
+localparam TILE_WALL_COLOR  = 12'h333;
 localparam TILE_SNAKE1_COLOR = 12'h00F;
 localparam TILE_SNAKE2_COLOR = 12'hF00;
 localparam TILE_POINT_COLOR = 12'hFF0;

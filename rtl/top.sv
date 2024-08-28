@@ -20,12 +20,14 @@ module top (
     inout wire mouse_data
 );
 
-map_s map;
+map_s map, map_nxt;
 vga_if vga_in(), vga_out();
 logic [11:0] mouse_x, mouse_y;
 direction dir_int, dir2_int;
+logic clk_divided;
 logic left_int, right_int;
 logic rcvdir;
+logic eaten1, eaten2;
 
 assign hsync = vga_out.hsync;
 assign vsync = vga_out.vsync;
@@ -48,12 +50,22 @@ draw u_draw (
     .rgb
 );
 
-logic clk_divided;
-
 clk_div u_clk_div(
     .clk,
     .rst,
     .clk_divided
+);
+
+collisons u_collisions(
+    .map,
+    .map_nxt,
+    .mode(GAME),
+    
+    .eaten1,
+    .eaten2,
+    .won(),
+    .lost(),
+    .draw()
 );
 
 move u_move (
@@ -64,7 +76,10 @@ move u_move (
     .dir2(dir2_int),
     .rcvdir,
     .map,
-    .com_err()
+    .predicted_map(map_nxt),
+    .com_err(),
+    .eaten1,
+    .eaten2
 );
 
 mouse_move u_mouse_move (

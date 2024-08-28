@@ -85,7 +85,7 @@ always_comb begin
         11 - click 
         */
         //case(r_data[7:6])
-        w_data_nxt = LEFT; 
+        w_data_nxt = dir1; 
         //    default:    w_data_nxt = w_data;
         //endcase
     end else begin

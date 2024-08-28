@@ -26,7 +26,7 @@ wire clk75MHz, clk100MHz;
 
 logic rx, tx;
 
-assign JA0 = rx;
+assign rx = JA0;
 assign JA1 = tx;
 assign led0 = rx;
 assign led1 = rx;

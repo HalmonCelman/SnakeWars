@@ -32,7 +32,7 @@ localparam CLK_PERIOD = 1000/75; //75MHz
  * Local variables and signals
  */
 
-logic clk, rst;
+logic clk, clk_move, rst;
 logic vs, hs;
 logic [3:0] r, g, b;
 
@@ -45,6 +45,17 @@ initial begin
     forever #(CLK_PERIOD/2) clk = ~clk;
 end
 
+initial begin
+    clk_move = 1'b0;
+    forever begin
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        clk_move = ~clk_move;
+    end
+end
 
 /**
  * Submodules instances
@@ -52,28 +63,8 @@ end
 
 //connections
 map_s map;
-vga_if vga_in(), vga_out();
-logic [RGB_B-1:0] rgb;
 
-vga_timing u_vga_timing(
-    .clk,
-    .rst,
-    .vga(vga_in)
-);
-
-draw u_draw (
-    .clk,
-    .rst,
-    .map,
-    .mouse_x(12'd20),
-    .mouse_y(12'd20),
-    .mode(GAME),
-    .vga_in,
-    .vga_out,
-    .rgb
-);
-
-logic clk_move, rcvdir;
+logic rcvdir, eaten1, eaten2;
 direction dir;
 
 move u_move (
@@ -84,78 +75,30 @@ move u_move (
     .dir2(dir),
     .rcvdir,
     .map,
+    .eaten1,
+    .eaten2,
     .com_err()
 );
-
-always_comb begin
-    vs = vga_out.vsync;
-    hs = vga_out.hsync;
-    {r,g,b} = rgb;
-end
-
-tiff_writer #(
-    .XDIM(16'd1328),
-    .YDIM(16'd806),
-    .FILE_DIR("../../results")
-) u_tiff_writer (
-    .clk(clk),
-    .r({r,r}), // fabricate an 8-bit value
-    .g({g,g}), // fabricate an 8-bit value
-    .b({b,b}), // fabricate an 8-bit value
-    .go(vs)
-);
-
 
 /**
  * Main test
  */
 
 initial begin
-            rst = 1'b0; clk_move = 1'b0;
-    # 30    rst = 1'b1; clk_move = 1'b1;
-    # 30    rst = 1'b0; clk_move = 1'b0;
+    rcvdir = 1'b0;   rst = 1'b0;
+    @(posedge clk);  rst = 1'b1;
+    @(posedge clk);  rst = 1'b0;
 
-    $display("If simulation ends before the testbench");
-    $display("completes, use the menu option to run all.");
-    $display("Prepare to wait a long time...");
+    $display("Starting move simulation...");
 
+    $display("Moving LEFT, eating");
+    {dir, rcvdir, eaten1, eaten2} = {LEFT, 1'b0, 1'b0, 1'b0};
+    @(posedge clk);
+    @(posedge clk_move);
+    @(posedge clk_move);
     rcvdir = 1'b0;
+    $display("tail x: %d tail y: %d direction: %s, tail tile: %s", map.snake1.tail_x, map.snake1.tail_y, map.snake1.segments[map.snake1.length - 2].name(), map.tiles[map.snake1.tail_y][map.snake1.tail_x].name());
 
-    wait (vs == 1'b0);
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    dir = LEFT;
-    clk_move = 1'b1;
-    rcvdir = 1'b1;
-
-    #30 clk_move = 1'b0; rcvdir = 1'b0; 
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    dir = UP;
-    clk_move = 1'b1;
-    rcvdir = 1'b1;
-    #30 clk_move = 1'b0; rcvdir = 1'b0; 
-
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    dir = RIGHT;
-    clk_move = 1'b1;
-    rcvdir = 1'b1; 
-    #30 clk_move = 1'b0; rcvdir = 1'b0; 
-
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    dir = DOWN;
-    clk_move = 1'b1;
-    rcvdir = 1'b1; 
-    #30 clk_move = 1'b0; rcvdir = 1'b0; 
- 
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    dir = NONE;
-    clk_move = 1'b1;
-    rcvdir = 1'b1; 
-    #30 clk_move = 1'b0; rcvdir = 1'b0; 
-
-    @(negedge vs) $display("Info: negedge VS at %t",$time);
-    // End the simulation.
-    $display("Simulation is over, check the waveforms.");
     $finish;
 end
 

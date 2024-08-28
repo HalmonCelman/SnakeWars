@@ -51,7 +51,7 @@ end
  */
 
 //connections
-map_if map();
+map_s map;
 vga_if vga_in(), vga_out();
 logic [RGB_B-1:0] rgb;
 
