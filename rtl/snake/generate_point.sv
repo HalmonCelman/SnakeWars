@@ -5,20 +5,19 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 import snake_pkg::*;
 
 module generate_point(
-    input logic clk_75,
-    input logic clk_div,
-    input logic rst,
-    input logic game_mode mode,
-    input logic map_s map_in,
-	input logic [5:0] seed_x_in,
-	input logic [5:0] seed_y_in,
-	input logic colision,
+    input logic         clk_75,
+    input logic         clk_div,
+    input logic         rst,
+    input game_mode     mode,
+    input map_s         map_in,
+	input logic [5:0]   seed_x_in,
+	input logic [5:0]   seed_y_in,
+	input logic         colision,
     
-	
-	output wire [5:0] seed_x_out,
-	output wire [5:0] seed_y_out,
-	output wire seed_rdy,
-    output wire map_s map_out
+	output logic [5:0]   seed_x_out,
+	output logic [5:0]   seed_y_out,
+	output logic        seed_rdy,
+    output map_s        map_out
 );
 
 
@@ -28,7 +27,7 @@ endfunction
 
 
 logic [5:0] point_x, point_y, seed_x, seed_y;
-game_mode mode_prvs_point, mode_prvs_sed;
+game_mode mode_prvs_point, mode_prvs_seed;
 
 
 assign seed_x_out = seed_x;
@@ -41,7 +40,7 @@ always_ff @(posedge clk_75) begin : seed_generation
         seed_y 		<= 6'd23;
     end else if(mode == MENU) begin
         seed_x <= (seed_x + 1) % 62;
-        seed_y <= ((seed_y + 1) % 46;
+        seed_y <= (seed_y + 1) % 46;
     end else begin
         seed_x <= seed_x;
         seed_y <= seed_y;
@@ -56,11 +55,11 @@ end
 
 always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
 	if(rst)
-		seed_rdy = 1'b0;
+		seed_rdy <= 1'b0;
 	else if (mode == GAME && mode_prvs_seed == MENU)
-		seed_rdy = 1'b1;
+		seed_rdy <= 1'b1;
 	else 
-		seed_rdy = 1'b0;
+		seed_rdy <= 1'b0;
 end
 
 
@@ -68,7 +67,7 @@ always_ff @(posedge clk_div) begin : point_generation
     if(rst) begin
         point_x <= 6'b0;
         point_y <= 6'b0;       
-    end else if(mode == GAME && mode_prvs == MENU) begin
+    end else if(mode == GAME && mode_prvs_point == MENU) begin
         point_x <= ((seed_x + seed_x_in) % 62) + 1;
         point_y <= ((seed_y + seed_y_in) % 46) + 1;
     end else if (mode == GAME && colision) begin
