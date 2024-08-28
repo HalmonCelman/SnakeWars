@@ -1,3 +1,5 @@
+import snake_pkg::*;
+
 module clk_div#(
     parameter COUNTS = 18750000,
     parameter COUNTER_BITS = 25
@@ -15,7 +17,7 @@ logic clk_divided_nxt;
 always_ff @(posedge clk) begin
     if(rst) begin
         ctr <= 25'd0;
-        clk_divided <= 1'0;
+        clk_divided <= 1'b0;
     end else begin
         ctr <= ctr_nxt;
         clk_divided <= clk_divided_nxt;

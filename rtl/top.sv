@@ -21,8 +21,7 @@ module top (
     inout wire mouse_data
 );
 
-map_s map, map_nxt, map_move_gen_p, map_gen_p_draw;
-direction dir_int;
+map_s map_nxt, map_move_gen_p, map_gen_p_draw;
 
 vga_if vga_in(), vga_out();
 
@@ -30,14 +29,12 @@ logic [11:0] mouse_x, mouse_y;
 direction dir_int, dir2_int;
 logic clk_divided;
 logic left_int, right_int;
-logic rcvdir;
-logic eaten1, eaten2;
 
-logic rcvdir;
+logic rcvdir, refreshed;
 logic eaten1, eaten2;
 
 logic [5:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing;
-logic send_seed, gain_point;
+logic send_seed;
 
 logic start_game_ingoing;
 
@@ -87,64 +84,33 @@ mode_control u_mode_control(
 );
 
 collisons u_collisions(
-    .map,
+    .clk,
+    .refreshed,
+    .rst,
+    .clk_div(clk_divided),
+    .map(map_move_gen_p),
     .map_nxt,
     .mode(GAME),
-    .vga_in,
-    .vga_out,
-    .rgb
-);
-
-logic clk_divided;
-
-clk_div u_clk_div(
-    .clk(clk),
-    .rst(rst),
-    .mode(mode_int),
-    .clk_divided(clk_divided)
-);
-
-mode_control u_mode_control(
-    .clk_75(clk),
-	.rst(rst),
-	.start_game(start_game_ingoing),
-	.won(won_int),
-	.lost(lost_int),
-	.draw(draw_int),
-	.con_error(con_error_int),
-	.click_x(mouse_x),
-	.click_y(mouse_y),
-	.click_e(left_int),
-    .mode(mode_int)
-);
-
-collisons u_collisions(
-    .map,
-    .map_nxt,
-    .mode(GAME),
-    
     .eaten1,
     .eaten2,
-    .won(),
-    .lost(),
-    .draw()
+    .won(won_int),
+    .lost(lost_int),
+    .draw(draw_int)
 );
 
 move u_move (
     .clk(clk),
     .clk_div(clk_divided),
     .rst,
+    .refreshed,
     .dir1(dir_int),
     .dir2(dir2_int),
     .rcvdir,
-    .map,
-    .predicted_map(map_nxt),
-    .com_err(),
+    .map(map_move_gen_p),
+    .map_nxt,
+    .com_err(con_error_int),
     .eaten1,
     .eaten2
-    .rst(rst),
-    .dir(dir_int),
-    .map(map_move_gen_p)
 );
 
 generate_point u_generate_point(
@@ -155,7 +121,7 @@ generate_point u_generate_point(
     .map_in(map_move_gen_p),
     .seed_x_in(seed_x_ingoing),
     .seed_y_in(seed_y_ingoing),
-    .colision(gain_point),
+    .colision(eaten1 | eaten2),
     .seed_x_out(seed_x_outgoing),
     .seed_y_out(seed_y_outgoing),
     .seed_rdy(send_seed),
@@ -188,6 +154,12 @@ communicate u_communicate(
     .rst,
     .rx,
     .send(clk_divided),
+    .seed_rdy(send_seed),
+    .seed_x_in(seed_x_outgoing),
+    .seed_y_in(seed_y_outgoing),
+    .start_game(start_game_ingoing),
+    .seed_x_out(seed_x_ingoing),
+    .seed_y_out(seed_y_ingoing),
     .tx,
     .dir1(dir_int),
     .dir2(dir2_int),

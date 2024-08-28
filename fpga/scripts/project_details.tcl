@@ -74,7 +74,6 @@ set sv_files {
 # Specify Verilog design files location         -- EDIT
 set verilog_files {
     rtl/clk_wiz_0_clk_wiz.v
-    ../rtl/uart/flag_buf.v
     ../rtl/uart/uart_rx.v
     ../rtl/uart/uart_tx.v
     ../rtl/uart/uart.v

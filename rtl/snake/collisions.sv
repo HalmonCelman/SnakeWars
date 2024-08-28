@@ -5,9 +5,6 @@ module collisons(
     input wire clk_div,
     input wire refreshed,
     input wire rst,
-    input wire click_e,
-    input wire [11:0] click_x,
-    input wire [11:0] click_y,
     input map_s map,
     input map_s map_nxt,
     input game_mode mode,
@@ -121,8 +118,8 @@ always_comb begin
     hit_wall2 = (map.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == WALL);
 
     // how to die: commit suicide, get killed or sprint into sth hard(wall) 
-    died1 = (suicide1 || got_killed1 || hit_wall1);
-    died2 = (suicide2 || got_killed2 || hit_wall2);
+    died1 = (suicide1 || got_killed1 || hit_wall1 || head_bump);
+    died2 = (suicide2 || got_killed2 || hit_wall2 || head_bump);
 
     // is it long enough? remember that you can also win without killing anyone
     long1 = (map_nxt.snake1.length == MAX_SNAKE_LENGTH);
@@ -132,10 +129,10 @@ end
 always_comb begin
     case(mode)
         GAME: begin
-                 if(died1 && died2) {won_pre,lost_pre,draw_nxt} = 5'b001; // died at the same moment
-            else if(died1 || long2) {won_pre,lost_pre,draw_nxt} = 5'b010; // lost
-            else if(died2 || long1) {won_pre,lost_pre,draw_nxt} = 5'b100; // won
-            else                    {won_pre,lost_pre,draw_nxt} = 5'b000; // nothing
+                 if(died1 && died2) {won_pre,lost_pre,draw_nxt} = 3'b001; // died at the same moment
+            else if(died1 || long2) {won_pre,lost_pre,draw_nxt} = 3'b010; // lost
+            else if(died2 || long1) {won_pre,lost_pre,draw_nxt} = 3'b100; // won
+            else                    {won_pre,lost_pre,draw_nxt} = 3'b000; // nothing
         end
         default:                    {won_pre,lost_pre,draw_nxt} = 3'b000;
     endcase

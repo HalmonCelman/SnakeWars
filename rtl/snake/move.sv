@@ -15,13 +15,14 @@ module move(
     input wire eaten2,
 
     output map_s map,
-    output map_s predicted_map,
-    output logic com_err
+    output map_s map_nxt,
+    output logic com_err,
+    output logic refreshed
 );
 
-map_s map_nxt;
+
 logic clk_div_prv;
-logic refreshed, refreshed_nxt;
+logic refreshed_nxt;
 logic com_err_nxt;
 logic pos_clk_div;
 
