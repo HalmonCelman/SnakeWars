@@ -13,10 +13,24 @@ module top_basys3 (
     output wire [3:0] vgaGreen,
     output wire [3:0] vgaBlue,
     inout wire PS2Clk,
-    inout wire PS2Data
+    inout wire PS2Data,
+
+    input wire JA0,
+    output logic JA1,
+
+    output logic led0,
+    output logic led1
 );
 
 wire clk75MHz, clk100MHz;
+
+logic rx, tx;
+
+assign rx = JA0;
+assign JA1 = tx;
+assign led0 = rx;
+assign led1 = rx;
+
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
@@ -36,7 +50,9 @@ top u_top(
     .vsync(Vsync),
     .rgb({vgaRed, vgaGreen, vgaBlue}),
     .mouse_clk(PS2Clk),
-    .mouse_data(PS2Data)
+    .mouse_data(PS2Data),
+    .rx,
+    .tx
 );
 
 endmodule

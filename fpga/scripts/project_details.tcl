@@ -79,6 +79,7 @@ set verilog_files {
     ../rtl/uart/uart_tx.v
     ../rtl/uart/uart.v
     ../rtl/utils/fifo.v
+    ../rtl/utils/mod_m_counter.v
 }
 
 # Specify VHDL design files location            -- EDIT
