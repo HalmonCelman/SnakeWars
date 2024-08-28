@@ -10,57 +10,79 @@ module generate_point(
     input logic rst,
     input logic game_mode mode,
     input logic map_s map_in,
-	input logic seed_x_p2,
-	input logic seed_y_p2,
+	input logic [5:0] seed_x_in,
+	input logic [5:0] seed_y_in,
 	input logic colision,
     
+	
+	output wire [5:0] seed_x_out,
+	output wire [5:0] seed_y_out,
+	output wire seed_rdy,
     output wire map_s map_out
 );
+
 
 function [5:0] lfsr(logic [5:0] in_num);
     return {in_num[4], in_num[3], in_num[2], in_num[1], in_num[0] ^ in_num[5], in_num[5]};
 endfunction
 
+
 logic [5:0] point_x, point_y, seed_x, seed_y;
-game_mode mode_prvs;
+game_mode mode_prvs_point, mode_prvs_sed;
+
+
+assign seed_x_out = seed_x;
+assign seed_y_out = seed_y;
 
 
 always_ff @(posedge clk_75) begin : seed_generation
     if(rst) begin
-        seed_x <= 6'b1;
-        seed_y <= 6'b1;
-    end else if(mode == MENU && mode_prvs) begin
-        seed_x <= ((seed_x + seed_x_p2) % 62) + 1;
-        seed_y <= ((seed_y + seed_y_p2) % 46) + 1;
+        seed_x 		<= 6'd1;
+        seed_y 		<= 6'd23;
     end else if(mode == MENU) begin
         seed_x <= (seed_x + 1) % 62;
-        seed_y <= ((seed_y + 3)*seed_x) % 46;
+        seed_y <= ((seed_y + 1) % 46;
     end else begin
         seed_x <= seed_x;
         seed_y <= seed_y;
     end
-
+	
 	if(rst)
-		mode_prvs <= MENU;
+		mode_prvs_seed <= MENU;
 	else 
-		mode_prvs <= mode;
+		mode_prvs_seed <= mode;
+end
+
+
+always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
+	if(rst)
+		seed_rdy = 1'b0;
+	else if (mode == GAME && mode_prvs_seed == MENU)
+		seed_rdy = 1'b1;
+	else 
+		seed_rdy = 1'b0;
 end
 
 
 always_ff @(posedge clk_div) begin : point_generation 
     if(rst) begin
-        point_x <= 6'b1;
-        point_y <= 6'b1;       
-    end else if(mode == MENU) begin;
-        point_x <= seed_x;
-        point_y <= seed_y;
+        point_x <= 6'b0;
+        point_y <= 6'b0;       
+    end else if(mode == GAME && mode_prvs == MENU) begin
+        point_x <= ((seed_x + seed_x_in) % 62) + 1;
+        point_y <= ((seed_y + seed_y_in) % 46) + 1;
     end else if (mode == GAME && colision) begin
-        point_x <= lfsr(point_x);
-        point_y <= lfsr(point_y);
+        point_x <= (lfsr((point_x)) % 62) + 1;
+        point_y <= (lfsr((point_y)) % 46) + 1;
     end else begin
         point_x <= point_x;
         point_y <= point_y;
     end
+	
+	if(rst)
+		mode_prvs_point <= MENU;
+	else 
+		mode_prvs_point <= mode;
 end
 
 
@@ -112,8 +134,11 @@ always_ff @(posedge clk_75) begin : map_update
 
         for(int i=0;i<MAP_HEIGHT;i++) begin
             for(int j=0;j<MAP_WIDTH;j++) begin
+				if(point_x + point_y == 0) 
+                	map_out.tiles[i][j] <= map_in.tiles[i][j];
+				else
+					map_out.tiles[i][j] <= i == point_y && j == point_x ? map_in.tiles[i][j] != POINT ? POINT : map_in.tiles[i][j] : map_in.tiles[i][j];
 				
-                map_out.tiles[i][j] <= i == point_y && j == point_x ? map_in.tiles[i][j] != POINT ? POINT : map_in.tiles[i][j] : map_in.tiles[i][j];
             end
         end
 
