@@ -61,6 +61,7 @@ logic clk_divided;
 clk_div u_clk_div(
     .clk(clk),
     .rst(rst),
+    .mode(mode_int),
     .clk_divided(clk_divided)
 );
 

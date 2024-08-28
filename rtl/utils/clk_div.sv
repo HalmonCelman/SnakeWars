@@ -3,6 +3,7 @@ module clk_div#(
     parameter COUNTER_BITS = 25
 )(
     input wire clk,
+	input game_mode mode,
     input wire rst,
 
     output logic clk_divided
@@ -13,8 +14,8 @@ logic clk_divided_nxt;
 
 always_ff @(posedge clk) begin
     if(rst) begin
-        ctr <= '0;
-        clk_divided <= '0;
+        ctr <= 25'd0;
+        clk_divided <= 1'0;
     end else begin
         ctr <= ctr_nxt;
         clk_divided <= clk_divided_nxt;
@@ -23,10 +24,10 @@ end
 
 always_comb begin
     if(ctr >= COUNTS) begin
-        ctr_nxt = '0;
+        ctr_nxt = 25'd0;
         clk_divided_nxt = ~clk_divided;
     end else begin
-        ctr_nxt = ctr+1;
+        ctr_nxt = mode == GAME ? ctr+1 : 25'd0;
         clk_divided_nxt = clk_divided;
     end
 end
