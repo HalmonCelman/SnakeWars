@@ -2,6 +2,8 @@ import snake_pkg::*;
 
 module collisons(
     input wire clk,
+    input wire clk_div,
+    input wire refreshed,
     input wire rst,
     input wire click_e,
     input wire [11:0] click_x,
@@ -17,7 +19,29 @@ module collisons(
     output logic draw
 );
 
+logic won_pre, lost_pre; // predicten won/lost
 logic eaten1_nxt, eaten2_nxt, won_nxt, lost_nxt, draw_nxt;
+logic clk_div_prv, pos_clk_div;
+
+assign pos_clk_div = ~clk_div_prv & clk_div;
+
+always_ff @(posedge clk) begin
+    if(rst) begin
+        eaten1 <= '0;
+        eaten2 <= '0;
+        won    <= '0;
+        lost   <= '0;
+        draw   <= '0;
+    end else begin
+        eaten1 <= eaten1_nxt;
+        eaten2 <= eaten2_nxt;
+        won    <= won_nxt;
+        lost   <= lost_nxt;
+        draw   <= draw_nxt;
+    end
+
+    clk_div_prv <= clk_div_prv;
+end
 
 // POINT (it is possible that it will need to be one cycle before everything else, not sure how to solve at the moment, will see tommorow)
 always_comb begin
@@ -62,23 +86,6 @@ logic hit_wall1, hit_wall2;
 logic died1, died2;
 logic long1, long2;
 
-always_ff @(posedge clk) begin
-    if(rst) begin
-        eaten1 <= '0;
-        eaten2 <= '0;
-        won    <= '0;
-        lose   <= '0;
-        draw   <= '0;
-    end else begin
-        eaten1 <= eaten1_nxt;
-        eaten2 <= eaten2_nxt;
-        won    <= won_nxt;
-        lose   <= lose_nxt;
-        draw   <= draw_nxt;
-    end
-end
-
-
 always_comb begin
     // we walk into each other with our heads
     head_bump   = (map_nxt.snake1.head_x == map_nxt.snake2.head_x &&  map_nxt.snake1.head_y == map_nxt.snake2.head_y);
@@ -99,7 +106,7 @@ always_comb begin
     head1_body2 = (map.tiles[map_nxt.snake1.head_y][map_nxt.snake1.head_x] == SNAKE2);
     head2_body1 = (map.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == SNAKE1);
     head1_body1 = (map.tiles[map_nxt.snake1.head_y][map_nxt.snake1.head_x] == SNAKE1);
-    head1_body2 = (map.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == SNAKE2);
+    head2_body2 = (map.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == SNAKE2);
 
     // how to commit suicide (and cannibalism at the same moment): you either have to eat your tail, or eat your body (but not the previous tail cause it's moving)
     suicide1 = (head1_tail1 || (head1_body1 && !head1_oldtail1));
@@ -125,14 +132,18 @@ end
 always_comb begin
     case(mode)
         GAME: begin
-                 if(died1 && died2) {won_nxt,lost_nxt,draw_nxt} = 3'b001; // died at the same moment
-            else if(died1 || long2) {won_nxt,lost_nxt,draw_nxt} = 3'b010; // lost
-            else if(died2 || long1) {won_nxt,lost_nxt,draw_nxt} = 3'b100; // won
-            else                    {won_nxt,lost_nxt,draw_nxt} = 3'b000; // nothing
+                 if(died1 && died2) {won_pre,lost_pre,draw_nxt} = 5'b001; // died at the same moment
+            else if(died1 || long2) {won_pre,lost_pre,draw_nxt} = 5'b010; // lost
+            else if(died2 || long1) {won_pre,lost_pre,draw_nxt} = 5'b100; // won
+            else                    {won_pre,lost_pre,draw_nxt} = 5'b000; // nothing
         end
-        default:                    {won_nxt,lost_nxt,draw_nxt} = 3'b000;
+        default:                    {won_pre,lost_pre,draw_nxt} = 3'b000;
     endcase
 end
 
+always_comb begin
+    won_nxt  =  won_pre & (refreshed | pos_clk_div);
+    lost_nxt = lost_pre & (refreshed | pos_clk_div);
+end
 
 endmodule
