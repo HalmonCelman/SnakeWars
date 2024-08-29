@@ -26,9 +26,11 @@ function [5:0] lfsr(logic [5:0] in_num);
 endfunction
 
 
-logic [5:0] point_x, point_y, seed_x, seed_y;
+logic [5:0] point_x, point_y, act_point_x, act_point_y, seed_x, seed_y;
 game_mode mode_prvs_point, mode_prvs_seed;
 
+assign act_point_x = (seed_y_in ? (MAP_WIDTH-point_x-1): point_x);
+assign act_point_y = (seed_y_in ? (MAP_HEIGHT-point_y-1): point_y);
 
 assign seed_x_out = seed_x;
 assign seed_y_out = seed_y;
@@ -136,7 +138,7 @@ always_ff @(posedge clk_75) begin : map_update
 				if(point_x + point_y == 0) 
                 	map_out.tiles[i][j] <= map_in.tiles[i][j];
 				else
-					map_out.tiles[i][j] <= i == point_y && j == point_x ? map_in.tiles[i][j] != POINT ? POINT : map_in.tiles[i][j] : map_in.tiles[i][j];
+					map_out.tiles[i][j] <= i == act_point_y && j == act_point_x ? map_in.tiles[i][j] != POINT ? POINT : map_in.tiles[i][j] : map_in.tiles[i][j];
 				
             end
         end

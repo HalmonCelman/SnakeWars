@@ -61,8 +61,6 @@ set sv_files {
     ../rtl/snake/generate_point.sv
     ../rtl/snake/snake_pkg.sv
     ../rtl/snake/mode_control.sv
-    ../rtl/uart/get_memory.sv
-    ../rtl/uart/make_numbers.sv
     ../rtl/utils/delay.sv
     ../rtl/utils/clk_div.sv
     ../rtl/vga/vga_if.sv

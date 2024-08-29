@@ -113,6 +113,7 @@ always_comb begin
         dir2_nxt = dir2;
         rd_uart_nxt = 1'b0;
         rcvdir_nxt = 1'b0;
+        start_game_nxt = 1'b0;
         seed_x_out_nxt = seed_x_out;
         seed_y_out_nxt = seed_y_out;
     end

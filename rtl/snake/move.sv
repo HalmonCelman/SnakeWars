@@ -49,13 +49,7 @@ always_ff @(posedge clk) begin
             for(int j=0;j<MAP_WIDTH;j++) begin
                 if(i==0 || i==MAP_HEIGHT-1 || j==0 || j==MAP_WIDTH-1) begin
                     map.tiles[i][j] <= WALL;
-                end
-                /* tmp for testing eaten collision */
-                else if(i==20 && j == MAP_WIDTH-2) begin
-                    map.tiles[i][j] <= POINT;
-                end
-                /***********************************/
-                else if((i>=START_POS_Y && i<START_POS_Y+START_LENGTH) && (j==START_POS_X)) begin
+                end else if((i>=START_POS_Y && i<START_POS_Y+START_LENGTH) && (j==START_POS_X)) begin
                     map.tiles[i][j] <= SNAKE1;
                 end else if((i>=START_POS_Y_2 && i<START_POS_Y_2+START_LENGTH) && (j==START_POS_X_2)) begin
                     map.tiles[i][j] <= SNAKE2;
