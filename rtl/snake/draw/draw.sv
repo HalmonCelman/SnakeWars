@@ -10,7 +10,7 @@ module draw(
     input wire rst,
     input game_mode mode,
 
-    input map_s map,
+    input tile act_tile,
 
     input logic [11:0] mouse_x,
     input logic [11:0] mouse_y, 
@@ -198,7 +198,7 @@ draw_game #(
     .clk,
     .rst,
     
-    .map,
+    .act_tile,
 
     .vga_in,
     .vga_out(vga_game),

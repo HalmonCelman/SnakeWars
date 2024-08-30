@@ -12,7 +12,7 @@ module draw_game #(
     input wire clk,
     input wire rst,
 
-    input map_s map,
+    input tile act_tile,
 
     vga_if.in vga_in,
     vga_if.out vga_out,
@@ -38,7 +38,7 @@ always_ff @(posedge clk) begin
 end
 
 always_comb begin
-    case(map.tiles[vga_in.vcount/TILE_SIZE][vga_in.hcount/TILE_SIZE])
+    case(act_tile)//map.tiles[vga_in.vcount/TILE_SIZE][vga_in.hcount/TILE_SIZE])
         EMPTY:      rgb_nxt=TILE_EMPTY_COLOR;
         WALL:       rgb_nxt=TILE_WALL_COLOR;
         SNAKE1:     rgb_nxt=TILE_SNAKE1_COLOR;
