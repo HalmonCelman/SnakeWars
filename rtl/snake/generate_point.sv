@@ -10,23 +10,23 @@ module generate_point(
     input logic         rst,
     input game_mode     mode,
     input map_s         map_in,
-	input logic [5:0]   seed_x_in,
-	input logic [5:0]   seed_y_in,
+	input logic [4:0]   seed_x_in,
+	input logic [4:0]   seed_y_in,
 	input logic         colision,
     
-	output logic [5:0]   seed_x_out,
-	output logic [5:0]   seed_y_out,
+	output logic [4:0]   seed_x_out,
+	output logic [4:0]   seed_y_out,
 	output logic        seed_rdy,
     output map_s        map_out
 );
 
 
-function [5:0] lfsr(logic [5:0] in_num);
-    return {in_num[4], in_num[3], in_num[2], in_num[1], in_num[0] ^ in_num[5], in_num[5]};
+function [4:0] lfsr(logic [4:0] in_num);
+    return {in_num[3], in_num[2], in_num[1], in_num[0] ^ in_num[5], in_num[5]};
 endfunction
 
 
-logic [5:0] point_x, point_y, act_point_x, act_point_y, seed_x, seed_y;
+logic [4:0] point_x, point_y, act_point_x, act_point_y, seed_x, seed_y;
 game_mode mode_prvs_point, mode_prvs_seed;
 
 assign act_point_x = (seed_y_in ? (MAP_WIDTH-point_x-1): point_x);
@@ -38,11 +38,11 @@ assign seed_y_out = seed_y;
 
 always_ff @(posedge clk_75) begin : seed_generation
     if(rst) begin
-        seed_x 		<= 6'd1;
-        seed_y 		<= 6'd23;
+        seed_x 		<= 5'd1;
+        seed_y 		<= 5'd23;
     end else if(mode == MENU) begin
-        seed_x <= (seed_x + 1) % 62;
-        seed_y <= (seed_y + 1) % 46;
+        seed_x <= (seed_x + 1) % 31;
+        seed_y <= (seed_y + 1) % 23;
     end else begin
         seed_x <= seed_x;
         seed_y <= seed_y;
@@ -70,11 +70,11 @@ always_ff @(posedge clk_div) begin : point_generation
         point_x <= 6'b0;
         point_y <= 6'b0;       
     end else if(mode == GAME && mode_prvs_point == MENU) begin
-        point_x <= ((seed_x + seed_x_in) % 62) + 1;
-        point_y <= ((seed_y + seed_y_in) % 46) + 1;
+        point_x <= ((seed_x + seed_x_in) % 30) + 1;
+        point_y <= ((seed_y + seed_y_in) % 22) + 1;
     end else if (mode == GAME && colision) begin
-        point_x <= (lfsr((point_x)) % 62) + 1;
-        point_y <= (lfsr((point_y)) % 46) + 1;
+        point_x <= (lfsr((point_x)) % 30) + 1;
+        point_y <= (lfsr((point_y)) % 22) + 1;
     end else begin
         point_x <= point_x;
         point_y <= point_y;
