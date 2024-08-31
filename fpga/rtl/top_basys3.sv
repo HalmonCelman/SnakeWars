@@ -16,10 +16,7 @@ module top_basys3 (
     inout wire PS2Data,
 
     input wire JA0,
-    output logic JA1,
-
-    output logic led0,
-    output logic led1
+    output logic JA1
 );
 
 wire clk75MHz, clk100MHz;

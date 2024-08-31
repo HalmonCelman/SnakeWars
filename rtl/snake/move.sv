@@ -13,6 +13,7 @@ module move(
     input wire rcvdir,
     input wire eaten1,
     input wire eaten2,
+    input game_mode mode,
 
     output map_s map,
     output map_s map_nxt,
@@ -24,11 +25,12 @@ logic clk_div_prv, clk_div_reg;
 logic refreshed_nxt;
 logic com_err_nxt;
 logic pos_clk_div;
+game_mode mode_prv;
 
 assign pos_clk_div = ((clk_div_prv == 1'b0) && (clk_div_reg == 1'b1));
 
 always_ff @(posedge clk) begin
-    if(rst) begin
+    if(rst || (mode == GAME && mode_prv == MENU)) begin
         com_err <= 1'b0;
         refreshed <= 1'b1;
 
@@ -104,6 +106,8 @@ always_ff @(posedge clk) begin
 
     clk_div_reg <= clk_div;
     clk_div_prv <= clk_div_reg;
+
+    mode_prv <= mode;
 end
 
 always_comb begin

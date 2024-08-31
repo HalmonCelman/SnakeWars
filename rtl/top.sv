@@ -33,7 +33,7 @@ logic left_int, right_int;
 logic rcvdir, refreshed;
 logic eaten1, eaten2;
 
-logic [5:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing;
+logic [4:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing;
 logic send_seed;
 
 logic start_game_ingoing;
@@ -73,10 +73,10 @@ mode_control u_mode_control(
     .clk_75(clk),
 	.rst(rst),
 	.start_game(start_game_ingoing),
-	.won(won_int),
-	.lost(lost_int),
-	.draw(draw_int),
-	.con_error(con_error_int),
+	.won(0),
+	.lost(0),
+	.draw(0),
+	.con_error(0),
 	.click_x(mouse_x),
 	.click_y(mouse_y),
 	.click_e(left_int),
@@ -103,14 +103,15 @@ move u_move (
     .clk_div(clk_divided),
     .rst,
     .refreshed,
+    .mode(mode_int),
     .dir1(dir_int),
     .dir2(dir2_int),
     .rcvdir,
     .map(map_move_gen_p),
     .map_nxt,
     .com_err(con_error_int),
-    .eaten1,
-    .eaten2
+    .eaten1(0),
+    .eaten2(0)
 );
 
 generate_point u_generate_point(
@@ -121,7 +122,7 @@ generate_point u_generate_point(
     .map_in(map_move_gen_p),
     .seed_x_in(seed_x_ingoing),
     .seed_y_in(seed_y_ingoing),
-    .colision(eaten1 | eaten2),
+    .colision(0),
     .seed_x_out(seed_x_outgoing),
     .seed_y_out(seed_y_outgoing),
     .seed_rdy(send_seed),
