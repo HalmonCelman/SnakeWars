@@ -1,0 +1,8 @@
+
+# Authors: Krzysztof Korbaś, Emilia Jerdanek
+
+sv work ../../rtl/vga/vga_pkg.sv \
+        ../../rtl/snake/snake_pkg.sv \
+		../../rtl/snake/generate_point.sv \
+        generate_point_tb.sv
+

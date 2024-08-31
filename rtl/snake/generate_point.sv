@@ -22,7 +22,7 @@ module generate_point(
 
 
 function [4:0] lfsr(logic [4:0] in_num);
-    return {in_num[3], in_num[2], in_num[1], in_num[0] ^ in_num[5], in_num[5]};
+    return {in_num[3], in_num[2], in_num[1], in_num[0] ^ in_num[4], in_num[4]};
 endfunction
 
 
@@ -65,7 +65,7 @@ always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
 end
 
 
-always_ff @(posedge clk_div) begin : point_generation 
+always_ff @(posedge clk_div, posedge colision) begin : point_generation 
     if(rst) begin
         point_x <= 6'b0;
         point_y <= 6'b0;       
@@ -73,8 +73,8 @@ always_ff @(posedge clk_div) begin : point_generation
         point_x <= ((seed_x + seed_x_in) % 30) + 1;
         point_y <= ((seed_y + seed_y_in) % 22) + 1;
     end else if (mode == GAME && colision) begin
-        point_x <= (lfsr((point_x)) % 30) + 1;
-        point_y <= (lfsr((point_y)) % 22) + 1;
+        point_x <= (lfsr(point_x) % 30) + 1;
+        point_y <= (lfsr(point_y) % 22) + 1;
     end else begin
         point_x <= point_x;
         point_y <= point_y;
