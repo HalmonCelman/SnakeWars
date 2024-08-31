@@ -88,7 +88,7 @@ collisons u_collisions(
     .refreshed,
     .rst,
     .clk_div(clk_divided),
-    .map(map_move_gen_p),
+    .map(map_gen_p_draw),
     .map_nxt,
     .mode(GAME),
     .eaten1,

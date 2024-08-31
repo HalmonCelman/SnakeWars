@@ -1,0 +1,15 @@
+# Authors: Krzysztof Korbaś, Emilia Jerdanek
+
+sv work ../../rtl/vga/vga_if.sv \
+        ../../rtl/vga/vga_pkg.sv \
+        ../../rtl/vga/vga_timing.sv \
+        ../../rtl/utils/delay.sv \
+        ../../rtl/snake/snake_pkg.sv \
+        ../../rtl/snake/move.sv \
+        ../../rtl/snake/collisions.sv \
+        ../../rtl/snake/generate_point.sv \
+        ../../rtl/utils/clk_div.sv \
+        ../common/tiff_writer.sv \
+        collisions_tb.sv
+
+vhdl work ../../rtl/mouse/MouseDisplay.vhd

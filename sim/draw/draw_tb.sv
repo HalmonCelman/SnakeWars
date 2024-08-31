@@ -67,7 +67,7 @@ vga_timing u_vga_timing(
 draw dut (
     .clk,
     .rst,
-    .map,
+    .act_tile(map.tiles[vga_in.vcount/TILE_SIZE][vga_in.hcount/TILE_SIZE]),
     .mouse_x(12'd20),
     .mouse_y(12'd20),
     .mode,

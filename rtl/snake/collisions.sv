@@ -8,6 +8,8 @@ module collisons(
     input map_s map,
     input map_s map_nxt,
     input game_mode mode,
+    input direction dir1,
+    input direction dir2,
     
     output logic eaten1,
     output logic eaten2,
@@ -16,7 +18,7 @@ module collisons(
     output logic draw
 );
 
-logic won_pre, lost_pre; // predicten won/lost
+logic won_pre, lost_pre, draw_pre; // predicten won/lost/draw
 logic eaten1_nxt, eaten2_nxt, won_nxt, lost_nxt, draw_nxt;
 logic clk_div_prv, pos_clk_div;
 
@@ -37,7 +39,7 @@ always_ff @(posedge clk) begin
         draw   <= draw_nxt;
     end
 
-    clk_div_prv <= clk_div_prv;
+    clk_div_prv <= clk_div;
 end
 
 // POINT (it is possible that it will need to be one cycle before everything else, not sure how to solve at the moment, will see tommorow)
@@ -127,20 +129,22 @@ always_comb begin
 end
 
 always_comb begin
-    case(mode)
-        GAME: begin
-                 if(died1 && died2) {won_pre,lost_pre,draw_nxt} = 3'b001; // died at the same moment
-            else if(died1 || long2) {won_pre,lost_pre,draw_nxt} = 3'b010; // lost
-            else if(died2 || long1) {won_pre,lost_pre,draw_nxt} = 3'b100; // won
-            else                    {won_pre,lost_pre,draw_nxt} = 3'b000; // nothing
-        end
-        default:                    {won_pre,lost_pre,draw_nxt} = 3'b000;
-    endcase
-end
-
-always_comb begin
-    won_nxt  =  won_pre & (refreshed | pos_clk_div);
-    lost_nxt = lost_pre & (refreshed | pos_clk_div);
+    if(dir1 == NONE || dir2 == NONE) begin
+        {won_pre,lost_pre,draw_pre} = 3'b000;
+    end else begin
+        case(mode)
+            GAME: begin
+                    if(died1 && died2) {won_pre,lost_pre,draw_pre} = 3'b001; // died at the same moment
+                else if(died1 || long2) {won_pre,lost_pre,draw_pre} = 3'b010; // lost
+                else if(died2 || long1) {won_pre,lost_pre,draw_pre} = 3'b100; // won
+                else                    {won_pre,lost_pre,draw_pre} = 3'b000; // nothing
+            end
+            default:                    {won_pre,lost_pre,draw_pre} = 3'b000;
+        endcase
+    end
+    won_nxt  =  won_pre & refreshed;
+    lost_nxt = lost_pre & refreshed;
+    draw_nxt = draw_pre & refreshed;
 end
 
 endmodule
