@@ -10,11 +10,11 @@ import vga_pkg::*;
 localparam MAX_SNAKE_LENGTH = 15;
 localparam LENGTH_BITS = 4;
 
-localparam MAP_WIDTH = 64;
-localparam WIDTH_BITS = 6;
+localparam MAP_WIDTH = 32;
+localparam WIDTH_BITS = 5;
 
-localparam MAP_HEIGHT = 48;
-localparam HEIGHT_BITS = 6;
+localparam MAP_HEIGHT = 24;
+localparam HEIGHT_BITS = 5;
 
 // move options
 localparam START_LENGTH = 3;

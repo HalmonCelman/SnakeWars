@@ -73,250 +73,215 @@ always_ff @(posedge clk) begin
         com_err <= com_err_nxt;
         refreshed <= refreshed_nxt;
 
-        if(pos_clk_div) begin
-            map.snake1.length <= map_nxt.snake1.length;
-            map.snake1.head_x <= map_nxt.snake1.head_x;
-            map.snake1.head_y <= map_nxt.snake1.head_y;
-            map.snake1.tail_x <= map_nxt.snake1.tail_x;
-            map.snake1.tail_y <= map_nxt.snake1.tail_y;
-            for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-                map.snake1.segments[k] <= map_nxt.snake1.segments[k];
+        map.snake1.length <= map_nxt.snake1.length;
+        map.snake1.head_x <= map_nxt.snake1.head_x;
+        map.snake1.head_y <= map_nxt.snake1.head_y;
+        map.snake1.tail_x <= map_nxt.snake1.tail_x;
+        map.snake1.tail_y <= map_nxt.snake1.tail_y;
+
+        map.snake2.length <= map_nxt.snake2.length;
+        map.snake2.head_x <= map_nxt.snake2.head_x;
+        map.snake2.head_y <= map_nxt.snake2.head_y;
+        map.snake2.tail_x <= map_nxt.snake2.tail_x;
+        map.snake2.tail_y <= map_nxt.snake2.tail_y;
+
+        for(int i=0;i<MAP_HEIGHT;i++) begin
+            for(int j=0;j<MAP_WIDTH;j++) begin
+                map.tiles[i][j] <= map_nxt.tiles[i][j];
             end
         end
 
-        if(rcvdir) begin
-            map.snake2.length <= map_nxt.snake2.length;
-            map.snake2.head_x <= map_nxt.snake2.head_x;
-            map.snake2.head_y <= map_nxt.snake2.head_y;
-            map.snake2.tail_x <= map_nxt.snake2.tail_x;
-            map.snake2.tail_y <= map_nxt.snake2.tail_y;
-            for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-                map.snake2.segments[k] <= map_nxt.snake2.segments[k];
-            end
-        end
-
-        if(pos_clk_div || rcvdir) begin
-            for(int i=0;i<MAP_HEIGHT;i++) begin
-                for(int j=0;j<MAP_WIDTH;j++) begin
-                    map.tiles[i][j] <= map_nxt.tiles[i][j];
-                end
-            end
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            map.snake1.segments[k] <= map_nxt.snake1.segments[k];
+            map.snake2.segments[k] <= map_nxt.snake2.segments[k];
         end
     end
 
     clk_div_prv <= clk_div;
 end
 
-
 always_comb begin
-    for(int i=0;i<MAP_HEIGHT;i++) begin
-        for(int j=0;j<MAP_WIDTH;j++) begin
-            map_nxt.tiles[i][j] = map.tiles[i][j];
+    if(pos_clk_div) begin
+        if(eaten1) begin
+            map_nxt.snake1.length = map.snake1.length+1;
+        end else begin
+            map_nxt.snake1.length = map.snake1.length;
         end
-    end
 
-    case(dir1)
-        UP:      map_nxt.tiles[map.snake1.head_y-1][map.snake1.head_x  ] = SNAKE1;
-        DOWN:    map_nxt.tiles[map.snake1.head_y+1][map.snake1.head_x  ] = SNAKE1;
-        RIGHT:   map_nxt.tiles[map.snake1.head_y  ][map.snake1.head_x+1] = SNAKE1;
-        LEFT:    map_nxt.tiles[map.snake1.head_y  ][map.snake1.head_x-1] = SNAKE1;
-        default: map_nxt.tiles[map.snake1.head_y  ][map.snake1.head_x  ] = SNAKE1;
-    endcase
-
-    if(~eaten1) begin
-        case(map.snake1.segments[map.snake1.length-2])
-            UP:      map_nxt.tiles[map.snake1.tail_y-1][map.snake1.tail_x  ] = EMPTY;
-            DOWN:    map_nxt.tiles[map.snake1.tail_y+1][map.snake1.tail_x  ] = EMPTY;
-            RIGHT:   map_nxt.tiles[map.snake1.tail_y  ][map.snake1.tail_x+1] = EMPTY;
-            LEFT:    map_nxt.tiles[map.snake1.tail_y  ][map.snake1.tail_x-1] = EMPTY;
-            default: map_nxt.tiles[map.snake1.tail_y  ][map.snake1.tail_x  ] = EMPTY;
+        case(dir1)
+            NONE: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x;
+                map_nxt.snake1.head_y = map.snake1.head_y;
+            end
+            UP: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x;
+                map_nxt.snake1.head_y = map.snake1.head_y-1;
+            end
+            DOWN: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x;
+                map_nxt.snake1.head_y = map.snake1.head_y+1;
+            end
+            RIGHT: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x+1;
+                map_nxt.snake1.head_y = map.snake1.head_y;
+            end
+            LEFT: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x-1;
+                map_nxt.snake1.head_y = map.snake1.head_y;
+            end
+            default: begin 
+                map_nxt.snake1.head_x = map.snake1.head_x;
+                map_nxt.snake1.head_y = map.snake1.head_y;
+            end
         endcase
-    end else begin
-        map_nxt.tiles[map.snake1.tail_y  ][map.snake1.tail_x  ] = EMPTY;
-    end
 
-    case(dir2)
-        UP:      map_nxt.tiles[map.snake2.head_y+1][map.snake2.head_x  ] = SNAKE2;
-        DOWN:    map_nxt.tiles[map.snake2.head_y-1][map.snake2.head_x  ] = SNAKE2;
-        RIGHT:   map_nxt.tiles[map.snake2.head_y  ][map.snake2.head_x-1] = SNAKE2;
-        LEFT:    map_nxt.tiles[map.snake2.head_y  ][map.snake2.head_x+1] = SNAKE2;
-        default: map_nxt.tiles[map.snake2.head_y  ][map.snake2.head_x  ] = SNAKE2;
-    endcase
+        if(!eaten1) begin
+            case(map.snake1.segments[map.snake1.length-2])
+                NONE: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y;
+                end
+                UP: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y-1;
+                end
+                DOWN: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y+1;
+                end
+                RIGHT: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x+1;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y;
+                end
+                LEFT: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x-1;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y;
+                end
+                default: begin  
+                    map_nxt.snake1.tail_x = map.snake1.tail_x;
+                    map_nxt.snake1.tail_y = map.snake1.tail_y;
+                end
+            endcase
+        end else begin
+            map_nxt.snake1.tail_x = map.snake1.tail_x;
+            map_nxt.snake1.tail_y = map.snake1.tail_y;
+        end
 
-    if(~eaten2) begin
-        case(map.snake2.segments[map.snake2.length-2])
-            UP:      map_nxt.tiles[map.snake2.tail_y+1][map.snake2.tail_x  ] = EMPTY;
-            DOWN:    map_nxt.tiles[map.snake2.tail_y-1][map.snake2.tail_x  ] = EMPTY;
-            RIGHT:   map_nxt.tiles[map.snake2.tail_y  ][map.snake2.tail_x-1] = EMPTY;
-            LEFT:    map_nxt.tiles[map.snake2.tail_y  ][map.snake2.tail_x+1] = EMPTY;
-            default: map_nxt.tiles[map.snake2.tail_y  ][map.snake2.tail_x  ] = EMPTY;
-        endcase
-    end else begin
-        map_nxt.tiles[map.snake2.tail_y  ][map.snake2.tail_x  ] = EMPTY;
-    end
-end
-
-always_comb begin
-    if(eaten1) begin
-        map_nxt.snake1.length = map.snake1.length+1;
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            if(k<map_nxt.snake1.length-1) begin
+                if(dir1 != NONE) begin
+                    if(k==0)    map_nxt.snake1.segments[k] = dir1;
+                    else        map_nxt.snake1.segments[k] = map.snake1.segments[k-1];
+                end else begin
+                    map_nxt.snake1.segments[k] = map.snake1.segments[k];
+                end
+            end else begin
+                map_nxt.snake1.segments[k] = NONE;
+            end
+        end
     end else begin
         map_nxt.snake1.length = map.snake1.length;
-    end
-end
-
-always_comb begin
-    case(dir1)
-        UP: begin 
-            map_nxt.snake1.head_x = map.snake1.head_x;
-            map_nxt.snake1.head_y = map.snake1.head_y-1;
-        end
-        DOWN: begin 
-            map_nxt.snake1.head_x = map.snake1.head_x;
-            map_nxt.snake1.head_y = map.snake1.head_y+1;
-        end
-        RIGHT: begin 
-            map_nxt.snake1.head_x = map.snake1.head_x+1;
-            map_nxt.snake1.head_y = map.snake1.head_y;
-        end
-        LEFT: begin 
-            map_nxt.snake1.head_x = map.snake1.head_x-1;
-            map_nxt.snake1.head_y = map.snake1.head_y;
-        end
-        default: begin 
-            map_nxt.snake1.head_x = map.snake1.head_x;
-            map_nxt.snake1.head_y = map.snake1.head_y;
-        end
-    endcase
-end
-
-always_comb begin
-    if(~eaten1) begin
-        case(map.snake1.segments[map.snake1.length-2])
-            NONE: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x;
-                map_nxt.snake1.tail_y = map.snake1.tail_y;
-            end
-            UP: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x;
-                map_nxt.snake1.tail_y = map.snake1.tail_y-1;
-            end
-            DOWN: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x;
-                map_nxt.snake1.tail_y = map.snake1.tail_y+1;
-            end
-            RIGHT: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x+1;
-                map_nxt.snake1.tail_y = map.snake1.tail_y;
-            end
-            LEFT: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x-1;
-                map_nxt.snake1.tail_y = map.snake1.tail_y;
-            end
-            default: begin  
-                map_nxt.snake1.tail_x = map.snake1.tail_x;
-                map_nxt.snake1.tail_y = map.snake1.tail_y;
-            end
-        endcase
-    end else begin
+        map_nxt.snake1.head_x = map.snake1.head_x;
+        map_nxt.snake1.head_y = map.snake1.head_y;
         map_nxt.snake1.tail_x = map.snake1.tail_x;
         map_nxt.snake1.tail_y = map.snake1.tail_y;
+        
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            map_nxt.snake1.segments[k] = map.snake1.segments[k];
+        end
     end
-end
 
-always_comb begin
-    for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-        if(k<map.snake1.length-1+eaten1) begin
-            if(dir1 != NONE) begin
-                if(k==0)    map_nxt.snake1.segments[k] = dir1;
-                else        map_nxt.snake1.segments[k] = map.snake1.segments[k-1];
-            end else begin
-                map_nxt.snake1.segments[k] = map.snake1.segments[k];
-            end
+    if(rcvdir) begin // if uart direction provided
+        if(eaten2) begin
+            map_nxt.snake2.length = map.snake1.length+1;
         end else begin
-            map_nxt.snake1.segments[k] = NONE;
+            map_nxt.snake2.length = map.snake1.length;
         end
-    end
-end
 
-always_comb begin
-    if(eaten2) begin
-        map_nxt.snake2.length = map.snake1.length+1;
-    end else begin
-        map_nxt.snake2.length = map.snake1.length;
-    end
-end
-
-always_comb begin
-    case(dir2)
-        UP: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y+1;
-        end
-        DOWN: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y-1;
-        end
-        RIGHT: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x-1;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-        LEFT: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x+1;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-        default: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-    endcase
-end
-
-always_comb begin
-    if(~eaten2) begin
-        case(map.snake2.segments[map.snake2.length-2])
-            UP: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y+1;
+        case(dir2)
+            NONE: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y;
             end
-            DOWN: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y-1;
+            UP: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y+1;
             end
-            RIGHT: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x-1;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
+            DOWN: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y-1;
             end
-            LEFT: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x+1;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
+            RIGHT: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x-1;
+                map_nxt.snake2.head_y = map.snake2.head_y;
             end
-            default: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
+            LEFT: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x+1;
+                map_nxt.snake2.head_y = map.snake2.head_y;
+            end
+            default: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y;
             end
         endcase
+
+        if(!eaten2) begin
+            case(map.snake2.segments[map.snake2.length-2])
+                NONE: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                UP: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y+1;
+                end
+                DOWN: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y-1;
+                end
+                RIGHT: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x-1;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                LEFT: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x+1;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                default: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+            endcase
+        end else begin
+            map_nxt.snake2.tail_x = map.snake2.tail_x;
+            map_nxt.snake2.tail_y = map.snake2.tail_y;
+        end
+
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            if(k<map_nxt.snake2.length-1) begin
+                if(dir2 != NONE) begin
+                    if(k==0)    map_nxt.snake2.segments[k] = dir2;
+                    else        map_nxt.snake2.segments[k] = map.snake2.segments[k-1];
+                end else begin
+                    map_nxt.snake2.segments[k] = map.snake2.segments[k];
+                end
+            end else begin
+                map_nxt.snake2.segments[k] = NONE;
+            end
+        end
+
     end else begin
+        map_nxt.snake2.length = map.snake2.length;
+        map_nxt.snake2.head_x = map.snake2.head_x;
+        map_nxt.snake2.head_y = map.snake2.head_y;
         map_nxt.snake2.tail_x = map.snake2.tail_x;
         map_nxt.snake2.tail_y = map.snake2.tail_y;
-    end
-end
-
-always_comb begin
-    for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-        if(k<map.snake2.length-1+eaten2) begin
-            if(dir2 != NONE) begin
-                if(k==0)    map_nxt.snake2.segments[k] = dir2;
-                else        map_nxt.snake2.segments[k] = map.snake2.segments[k-1];
-            end else begin
-                map_nxt.snake2.segments[k] = map.snake2.segments[k];
-            end
-        end else begin
-            map_nxt.snake2.segments[k] = NONE;
+        
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            map_nxt.snake2.segments[k] = map.snake2.segments[k];
         end
     end
-end
 
-always_comb begin
     if(pos_clk_div || rcvdir || eaten1 || eaten2) begin
         if(rcvdir) begin
             refreshed_nxt = 1'b1;
@@ -330,9 +295,25 @@ always_comb begin
 
             refreshed_nxt = 1'b0;
         end
+
+        for(int i=0;i<MAP_HEIGHT;i++) begin
+            for(int j=0;j<MAP_WIDTH;j++) begin
+                if(map_nxt.snake1.head_y == i && map_nxt.snake1.head_x == j)                                        map_nxt.tiles[i][j] = SNAKE1;
+                else if(map_nxt.snake2.head_y == i && map_nxt.snake2.head_x == j)                                   map_nxt.tiles[i][j] = SNAKE2;
+                else if(map.snake1.tail_y == i && map.snake1.tail_x == j && dir1 != NONE && pos_clk_div && !eaten1) map_nxt.tiles[i][j] = EMPTY;
+                else if(map.snake2.tail_y == i && map.snake2.tail_x == j && dir2 != NONE && rcvdir      && !eaten2) map_nxt.tiles[i][j] = EMPTY;
+                else map_nxt.tiles[i][j] = map.tiles[i][j];
+            end
+        end
     end else begin
         com_err_nxt = com_err;
         refreshed_nxt = refreshed;
+
+        for(int i=0;i<MAP_HEIGHT;i++) begin
+            for(int j=0;j<MAP_WIDTH;j++) begin
+                map_nxt.tiles[i][j] = map.tiles[i][j];
+            end
+        end
     end
 end
 
