@@ -11,7 +11,7 @@ module collisions_tb;
 localparam CLK_PERIOD = 1000/75; //75MHz
 
 logic clk, rst;
-logic rcvdir, refreshed, clk_divided, eaten1, eaten2, won, lost, draw; 
+logic rcvdir, refreshed, clk_divided, eaten1, eaten2, eaten1_pre, eaten2_pre, won, lost, draw; 
 
 /**
  * Clock generation
@@ -49,7 +49,7 @@ end
 //connections
 map_s map, map_nxt, map_reg;
 
-
+/*
 move u_move (
     .clk,
     .clk_div(clk_divided),
@@ -60,14 +60,13 @@ move u_move (
     .map,
     .map_nxt,
     .com_err(),
-    .eaten1,
-    .eaten2,
+    .eaten1(eaten1_pre),
+    .eaten2(eaten2_pre),
     .refreshed
-);
+);*/
 
 collisons u_collisions(
     .clk,
-    .refreshed,
     .rst,
     .clk_div(clk_divided),
     .dir1(UP),
@@ -77,6 +76,8 @@ collisons u_collisions(
     .mode(GAME),
     .eaten1,
     .eaten2,
+    .eaten1_pre,
+    .eaten2_pre,
     .won,
     .lost,
     .draw
@@ -105,6 +106,44 @@ initial begin
     rst = 1'b0;
     @(posedge clk);  rst = 1'b1;
     @(posedge clk);  rst = 1'b0;
+    
+    map.snake1.length <= START_LENGTH;
+        map.snake1.head_x <= START_POS_X;
+        map.snake1.head_y <= START_POS_Y;
+        map.snake1.tail_x <= START_POS_X;
+        map.snake1.tail_y <= START_POS_Y+START_LENGTH-1;
+
+        map.snake2.length <= START_LENGTH;
+        map.snake2.head_x <= START_POS_X_2;
+        map.snake2.head_y <= START_POS_Y_2+START_LENGTH-1;
+        map.snake2.tail_x <= START_POS_X_2;
+        map.snake2.tail_y <= START_POS_Y_2;
+
+        for(int i=0;i<MAP_HEIGHT;i++) begin
+            for(int j=0;j<MAP_WIDTH;j++) begin
+                if(i==0 || i==MAP_HEIGHT-1 || j==0 || j==MAP_WIDTH-1) begin
+                    map.tiles[i][j] <= WALL;
+                end else if ((i==START_POS_Y - 1) && (j==START_POS_X)) begin
+                    map.tiles[i][j] <= POINT;
+                end else if((i>=START_POS_Y && i<START_POS_Y+START_LENGTH) && (j==START_POS_X)) begin
+                    map.tiles[i][j] <= SNAKE1;
+                end else if((i>=START_POS_Y_2 && i<START_POS_Y_2+START_LENGTH) && (j==START_POS_X_2)) begin
+                    map.tiles[i][j] <= SNAKE2;
+                end else begin
+                    map.tiles[i][j] <= EMPTY;
+                end
+            end
+        end
+
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            if(k<START_LENGTH-1) begin
+                map.snake1.segments[k] <= UP;
+                map.snake2.segments[k] <= UP;
+            end else begin
+                map.snake1.segments[k] <= NONE;
+                map.snake2.segments[k] <= NONE;
+            end
+        end
 
     $display("Starting collisions simulation...");
     

@@ -22,14 +22,14 @@ module mode_control(
 
 
 always_ff @(posedge clk_75) begin
-	if(rst)
+	if(rst) begin
 		mode <= MENU;
 		local_start <= 1'b0;
-	else
+	end else
 		case(mode)
 		
 			MENU: begin
-				if((click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
+				if(click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
 				    && click_y >= BUTTON2_Y &&  click_y <  BUTTON2_Y + BUTTONS_H) begin  
 					mode <= GAME;
 					local_start <= 1'b1;
@@ -41,7 +41,8 @@ always_ff @(posedge clk_75) begin
 			end
 
 			GAME: begin
-
+				local_start <= 1'b0;
+				
 				if(con_error)
 					mode <= ERROR;
 				else if(won)

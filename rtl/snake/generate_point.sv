@@ -54,8 +54,9 @@ end
 always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
 	if(rst) begin
 		seed_rdy <= 1'b0;
-	else if (mode == GAME && local_start)
+    end else if (mode == GAME && local_start) begin
 		seed_rdy <= 1'b1;
+    end
 end
 
 

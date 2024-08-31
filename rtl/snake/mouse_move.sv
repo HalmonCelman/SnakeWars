@@ -10,6 +10,7 @@ module mouse_move(
     input wire rst,
     input wire left,
     input wire right,
+    input game_mode mode,
 
     output direction dir
 );
@@ -25,10 +26,14 @@ always_ff @(posedge clk) begin
     if(rst) begin
         dir <= UP;
         state <= WAIT_MOUSE;
-    
     end else begin
-        dir <= dir_nxt;
-        state <= state_nxt;
+        if(mode == GAME) begin
+            dir <= dir_nxt;
+            state <= state_nxt;
+        end else begin
+            dir <= UP;
+            state <= WAIT_MOUSE;
+        end
     end
 
     clk_div_prev <= clk_divided;

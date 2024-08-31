@@ -3,51 +3,42 @@ import snake_pkg::*;
 module collisons(
     input wire clk,
     input wire clk_div,
-    input wire refreshed,
     input wire rst,
     input map_s map,
     input map_s map_nxt,
     input game_mode mode,
     input direction dir1,
     input direction dir2,
+    input wire rcvdir,
     
     output logic eaten1,
     output logic eaten2,
+    output logic eaten1_pre,
+    output logic eaten2_pre,
     output logic won,
     output logic lost,
     output logic draw
 );
 
-logic won_pre, lost_pre, draw_pre; // predicten won/lost/draw
 logic eaten1_nxt, eaten2_nxt, won_nxt, lost_nxt, draw_nxt;
-logic clk_div_prv, clk_div_reg, pos_clk_div;
 
-assign pos_clk_div = ~clk_div_prv & clk_div_reg;
-
-always_ff @(posedge clk) begin
-    if(rst) begin
-        eaten1 <= '0;
-        eaten2 <= '0;
-        won    <= '0;
-        lost   <= '0;
-        draw   <= '0;
-    end else begin
-        eaten1 <= eaten1_nxt;
-        eaten2 <= eaten2_nxt;
-        won    <= won_nxt;
-        lost   <= lost_nxt;
-        draw   <= draw_nxt;
-    end
-
-    clk_div_reg <= clk_div;
-    clk_div_prv <= clk_div_reg;
+always_ff @(posedge clk_div) begin
+    eaten1 <= eaten1_nxt;
+    eaten2 <= eaten2_nxt;
+    won    <= won_nxt;
+    lost   <= lost_nxt;
+    draw   <= draw_nxt;
 end
 
-// POINT (it is possible that it will need to be one cycle before everything else, not sure how to solve at the moment, will see tommorow)
+always_ff @(posedge clk) begin
+    eaten1_pre <= eaten1_nxt;
+    eaten2_pre <= eaten2_nxt;
+end
+
 always_comb begin
     case(mode)
         GAME: begin
-            if( map_nxt.tiles[map_nxt.snake1.head_y][map_nxt.snake1.head_x] == POINT) 
+            if( map.tiles[map_nxt.snake1.head_y][map_nxt.snake1.head_x] == POINT) 
                  eaten1_nxt = 1'b1;
             else begin
                  eaten1_nxt = 1'b0;
@@ -60,7 +51,7 @@ end
 always_comb begin
     case(mode)
         GAME: begin
-            if( map_nxt.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == POINT) 
+            if( map.tiles[map_nxt.snake2.head_y][map_nxt.snake2.head_x] == POINT) 
                  eaten2_nxt = 1'b1;
             else begin
                  eaten2_nxt = 1'b0;
@@ -131,21 +122,18 @@ end
 
 always_comb begin
     if(dir1 == NONE || dir2 == NONE) begin
-        {won_pre,lost_pre,draw_pre} = 3'b000;
+        {won_nxt,lost_nxt,draw_nxt} = 3'b000;
     end else begin
         case(mode)
             GAME: begin
-                    if(died1 && died2) {won_pre,lost_pre,draw_pre} = 3'b001; // died at the same moment
-                else if(died1 || long2) {won_pre,lost_pre,draw_pre} = 3'b010; // lost
-                else if(died2 || long1) {won_pre,lost_pre,draw_pre} = 3'b100; // won
-                else                    {won_pre,lost_pre,draw_pre} = 3'b000; // nothing
+                    if(died1 && died2)  {won_nxt,lost_nxt,draw_nxt} = 3'b001; // died at the same moment
+                else if(died1 || long2) {won_nxt,lost_nxt,draw_nxt} = 3'b010; // lost
+                else if(died2 || long1) {won_nxt,lost_nxt,draw_nxt} = 3'b100; // won
+                else                    {won_nxt,lost_nxt,draw_nxt} = 3'b000; // nothing
             end
-            default:                    {won_pre,lost_pre,draw_pre} = 3'b000;
+            default:                    {won_nxt,lost_nxt,draw_nxt} = 3'b000;
         endcase
     end
-    won_nxt  =  won_pre & refreshed;
-    lost_nxt = lost_pre & refreshed;
-    draw_nxt = draw_pre & refreshed;
 end
 
 endmodule

@@ -31,7 +31,7 @@ logic clk_divided;
 logic left_int, right_int;
 
 logic rcvdir, refreshed;
-logic eaten1, eaten2;
+logic eaten1, eaten2, eaten1_pre, eaten2_pre;
 
 logic [4:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing;
 logic send_seed;
@@ -76,7 +76,7 @@ mode_control u_mode_control(
 	.won(0),
 	.lost(0),
 	.draw(0),
-	.con_error(0),
+	.con_error(con_error_int),
 	.click_x(mouse_x),
 	.click_y(mouse_y),
 	.click_e(left_int),
@@ -85,14 +85,16 @@ mode_control u_mode_control(
 
 collisons u_collisions(
     .clk,
-    .refreshed,
     .rst,
     .clk_div(clk_divided),
     .map(map_gen_p_draw),
     .map_nxt,
     .mode(GAME),
+    .rcvdir,
     .eaten1,
     .eaten2,
+    .eaten1_pre,
+    .eaten2_pre,
     .won(won_int),
     .lost(lost_int),
     .draw(draw_int)
@@ -110,8 +112,8 @@ move u_move (
     .map(map_move_gen_p),
     .map_nxt,
     .com_err(con_error_int),
-    .eaten1(0),
-    .eaten2(0)
+    .eaten1(eaten1_pre),
+    .eaten2(eaten2_pre)
 );
 
 generate_point u_generate_point(
@@ -122,7 +124,7 @@ generate_point u_generate_point(
     .map_in(map_move_gen_p),
     .seed_x_in(seed_x_ingoing),
     .seed_y_in(seed_y_ingoing),
-    .colision(0),
+    .colision(eaten1 | eaten2),
     .seed_x_out(seed_x_outgoing),
     .seed_y_out(seed_y_outgoing),
     .seed_rdy(send_seed),
@@ -135,7 +137,8 @@ mouse_move u_mouse_move (
     .rst(rst),
     .left(left_int),
     .right(right_int),
-    .dir(dir_int)
+    .dir(dir_int),
+    .mode(mode_int)
 );
 
 mouse_control u_mouse_control(
