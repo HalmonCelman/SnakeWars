@@ -13,6 +13,7 @@ module generate_point(
 	input logic [4:0]   seed_x_in,
 	input logic [4:0]   seed_y_in,
 	input logic         colision,
+	input logic 		local_start,
     
 	output logic [4:0]   seed_x_out,
 	output logic [4:0]   seed_y_out,
@@ -27,7 +28,7 @@ endfunction
 
 
 logic [4:0] point_x, point_y, act_point_x, act_point_y, seed_x, seed_y;
-game_mode mode_prvs_point, mode_prvs_seed;
+game_mode mode_prvs_point;
 
 assign act_point_x = (seed_y_in ? (MAP_WIDTH-point_x-1): point_x);
 assign act_point_y = (seed_y_in ? (MAP_HEIGHT-point_y-1): point_y);
@@ -47,31 +48,29 @@ always_ff @(posedge clk_75) begin : seed_generation
         seed_x <= seed_x;
         seed_y <= seed_y;
     end
-	
-	if(rst)
-		mode_prvs_seed <= MENU;
-	else 
-		mode_prvs_seed <= mode;
 end
 
 
 always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
 	if(rst)
 		seed_rdy <= 1'b0;
-	else if (mode == GAME && mode_prvs_seed == MENU)
+	else if (mode == GAME && local_start)
 		seed_rdy <= 1'b1;
 	else 
 		seed_rdy <= 1'b0;
 end
 
 
-always_ff @(posedge clk_div, posedge colision) begin : point_generation 
+always_ff @(posedge (clk_div)) begin : point_generation 
     if(rst) begin
-        point_x <= 6'b0;
-        point_y <= 6'b0;       
-    end else if(mode == GAME && mode_prvs_point == MENU) begin
-        point_x <= ((seed_x + seed_x_in) % 30) + 1;
-        point_y <= ((seed_y + seed_y_in) % 22) + 1;
+        point_x <= 5'b0;
+        point_y <= 5'b0;       
+    end else if(mode == GAME && mode_prvs_point == MENU && !local_start) begin
+        point_x <= ((seed_x_in) % 30) + 1;
+        point_y <= ((seed_y_in) % 22) + 1;
+    end else if(mode == GAME && mode_prvs_point == MENU && local_start) begin
+        point_x <= ((seed_x) % 30) + 1;
+        point_y <= ((seed_y) % 22) + 1;
     end else if (mode == GAME && colision) begin
         point_x <= (lfsr(point_x) % 30) + 1;
         point_y <= (lfsr(point_y) % 22) + 1;

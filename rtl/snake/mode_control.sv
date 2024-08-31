@@ -16,22 +16,35 @@ module mode_control(
 	input logic [11:0] click_y,
 	input logic click_e,
 
-    output game_mode mode
+    output game_mode mode,
+	output logic local_start
 );
 
 always_ff @(posedge clk_75) begin
 	if(rst)
 		mode <= MENU;
+		local_start <= 1'b0;
 	else
 		case(mode)
 		
 			MENU: begin
 				if((click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
-				    && click_y >= BUTTON2_Y &&  click_y <  BUTTON2_Y + BUTTONS_H) || start_game)    
+				    && click_y >= BUTTON2_Y &&  click_y <  BUTTON2_Y + BUTTONS_H) begin  
 					mode <= GAME;
+					local_start <= 1'b1;
+				
+				end else if(start_game) begin	
+					mode <= GAME;
+					local_start <= 1'b0;
+				end else begin
+					mode <= mode;
+					local_start <= 1'b0;
+				end
 			end
 
 			GAME: begin
+				local_start <= 1'b1;
+
 				if(con_error)
 					mode <= ERROR;
 				else if(won)
@@ -40,21 +53,30 @@ always_ff @(posedge clk_75) begin
 					mode <= LOSE;
 				else if(draw)
 					mode <= DRAW;
+				else
+					mode <= mode;
 			end
 
 			WIN, LOSE, DRAW: begin
+				local_start <= 1'b0;
 				if( click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
 				    && click_y >= BUTTONEND_Y &&  click_y <  BUTTONEND_Y + BUTTONS_H )    
 					mode <= MENU;
+				else 
+					mode <= mode;
 			end
 
 			ERROR: begin
+				local_start <= 1'b0;
 				if( click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
 				    && click_y >= BUTTONE_Y &&  click_y <  BUTTONE_Y + BUTTONS_H )    
 					mode <= MENU;
+				else 
+					mode <= mode;
 			end
 
 			default: begin
+				local_start <= 1'b0;
 				mode <= MENU;
 			end
 

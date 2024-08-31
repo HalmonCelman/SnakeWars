@@ -18,13 +18,15 @@ generate_point u_generate_point(
 	.seed_x_out,
 	.seed_y_out,
 	.seed_rdy,
-	.map_out
+	.map_out,
+	.local_start
 );
 
 
 logic clk_75;
 logic clk_div;
 logic rst;
+logic local_start;
 game_mode mode;
 map_s map_in;
 logic [4:0] seed_x_in;
@@ -50,14 +52,39 @@ end
 
 initial begin
 	mode = MENU;
-	seed_x_in = 5'd0;
-	seed_y_in = 5'd0;
+	seed_x_in = 5'd1;
+	seed_y_in = 5'd1;
 	colision = 1'b0;
+	local_start = 1'b0;
 	rst = 1'b1;
 	
 	repeat(10) @(posedge clk_75);
 
 	rst = 1'b0;
+
+	repeat(500) @(posedge clk_75);
+
+	local_start = 1'b1;
+	mode = GAME;
+
+	repeat(500) @(posedge clk_75);
+	
+	colision = 1'b1;
+	@(posedge clk_div);
+	@(posedge clk_75);	
+	colision = 1'b0;
+	
+	repeat(100) @(posedge clk_75);
+	colision = 1'b1;
+	
+	repeat(3) @(posedge clk_div);
+
+	colision = 1'b0;
+
+	repeat(500) @(posedge clk_75);
+	
+	mode = MENU;
+	local_start = 1'b0;
 
 	repeat(500) @(posedge clk_75);
 
@@ -67,7 +94,7 @@ initial begin
 	
 	colision = 1'b1;
 	@(posedge clk_div);
-	@(posedge clk_75);
+	@(posedge clk_75);	
 	colision = 1'b0;
 	
 	repeat(500) @(posedge clk_75);
