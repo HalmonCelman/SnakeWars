@@ -52,16 +52,14 @@ end
 
 
 always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
-	if(rst)
+	if(rst) begin
 		seed_rdy <= 1'b0;
 	else if (mode == GAME && local_start)
 		seed_rdy <= 1'b1;
-	else 
-		seed_rdy <= 1'b0;
 end
 
 
-always_ff @(posedge (clk_div)) begin : point_generation 
+always_ff @(posedge (clk_div | local_start)) begin : point_generation 
     if(rst) begin
         point_x <= 5'b0;
         point_y <= 5'b0;       
