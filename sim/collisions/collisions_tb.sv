@@ -16,27 +16,28 @@ logic rcvdir, refreshed, clk_divided, eaten1, eaten2, won, lost, draw;
 /**
  * Clock generation
  */
-int i;
+
 initial begin
-    i=2;
     clk = 1'b0;
-    forever #(CLK_PERIOD/2) begin
-        clk = ~clk;
-        if(rcvdir == 1'b1) begin
-            rcvdir = '0;
-            i=0;
-        end else begin
-            if(i == 4) begin
-                rcvdir = 1'b1;
-            end
-            i++;
-        end
-    end
+    forever #(CLK_PERIOD/2) clk = ~clk;
 end
 
 initial begin
     clk_divided = 1'b0;
-    forever #(CLK_PERIOD*5/2) begin
+    forever begin
+        @(posedge clk);
+        @(posedge clk);
+        rcvdir = 1'b1;
+        @(posedge clk);
+        rcvdir = 1'b0;
+        @(posedge clk);
+        @(posedge clk);
+        clk_divided = ~clk_divided;
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
+        @(posedge clk);
         clk_divided = ~clk_divided;
     end
 end
@@ -69,7 +70,9 @@ collisons u_collisions(
     .refreshed,
     .rst,
     .clk_div(clk_divided),
-    .map,
+    .dir1(UP),
+    .dir2(UP),
+    .map(map_reg),
     .map_nxt,
     .mode(GAME),
     .eaten1,
@@ -99,7 +102,7 @@ generate_point u_generate_point(
  */
 
 initial begin
-    rcvdir=1'b0; rst = 1'b0;
+    rst = 1'b0;
     @(posedge clk);  rst = 1'b1;
     @(posedge clk);  rst = 1'b0;
 

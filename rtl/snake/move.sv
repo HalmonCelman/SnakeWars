@@ -12,7 +12,7 @@ module move(
     input direction dir2,
     input wire rcvdir,
     input wire eaten1,
-    input wire eaten2
+    input wire eaten2,
 
     output map_s map,
     output map_s map_nxt,
@@ -20,12 +20,12 @@ module move(
     output logic refreshed
 );
 
-logic clk_div_prv;
+logic clk_div_prv, clk_div_reg;
 logic refreshed_nxt;
 logic com_err_nxt;
 logic pos_clk_div;
 
-assign pos_clk_div = ((clk_div_prv == 1'b0) && (clk_div == 1'b1));
+assign pos_clk_div = ((clk_div_prv == 1'b0) && (clk_div_reg == 1'b1));
 
 always_ff @(posedge clk) begin
     if(rst) begin
@@ -95,16 +95,15 @@ always_ff @(posedge clk) begin
             end
         end
 
-        if(pos_clk_div || rcvdir) begin
-            for(int i=0;i<MAP_HEIGHT;i++) begin
-                for(int j=0;j<MAP_WIDTH;j++) begin
-                    map.tiles[i][j] <= map_nxt.tiles[i][j];
-                end
+        for(int i=0;i<MAP_HEIGHT;i++) begin
+            for(int j=0;j<MAP_WIDTH;j++) begin
+                map.tiles[i][j] <= map_nxt.tiles[i][j];
             end
         end
     end
 
-    clk_div_prv <= clk_div;
+    clk_div_reg <= clk_div;
+    clk_div_prv <= clk_div_reg;
 end
 
 always_comb begin
@@ -267,10 +266,10 @@ always_comb begin
 
     for(int i=0;i<MAP_HEIGHT;i++) begin
         for(int j=0;j<MAP_WIDTH;j++) begin
-            if(map_nxt.snake1.head_y == i && map_nxt.snake1.head_x == j)                                        map_nxt.tiles[i][j] = SNAKE1;
-            else if(map_nxt.snake2.head_y == i && map_nxt.snake2.head_x == j)                                   map_nxt.tiles[i][j] = SNAKE2;
-            else if(map.snake1.tail_y == i && map.snake1.tail_x == j && dir1 != NONE && pos_clk_div && !eaten1) map_nxt.tiles[i][j] = EMPTY;
-            else if(map.snake2.tail_y == i && map.snake2.tail_x == j && dir2 != NONE && rcvdir      && !eaten2) map_nxt.tiles[i][j] = EMPTY;
+            if(pos_clk_div & (map_nxt.snake1.head_y == i && map_nxt.snake1.head_x == j))                         map_nxt.tiles[i][j] = SNAKE1;
+            else if(rcvdir & (map_nxt.snake2.head_y == i && map_nxt.snake2.head_x == j))                         map_nxt.tiles[i][j] = SNAKE2;
+            else if(pos_clk_div & (map.snake1.tail_y == i && map.snake1.tail_x == j && dir1 != NONE && !eaten1)) map_nxt.tiles[i][j] = EMPTY;
+            else if(rcvdir      & (map.snake2.tail_y == i && map.snake2.tail_x == j && dir2 != NONE && !eaten2)) map_nxt.tiles[i][j] = EMPTY;
             else map_nxt.tiles[i][j] = map.tiles[i][j];
         end
     end

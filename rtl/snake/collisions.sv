@@ -20,9 +20,9 @@ module collisons(
 
 logic won_pre, lost_pre, draw_pre; // predicten won/lost/draw
 logic eaten1_nxt, eaten2_nxt, won_nxt, lost_nxt, draw_nxt;
-logic clk_div_prv, pos_clk_div;
+logic clk_div_prv, clk_div_reg, pos_clk_div;
 
-assign pos_clk_div = ~clk_div_prv & clk_div;
+assign pos_clk_div = ~clk_div_prv & clk_div_reg;
 
 always_ff @(posedge clk) begin
     if(rst) begin
@@ -39,7 +39,8 @@ always_ff @(posedge clk) begin
         draw   <= draw_nxt;
     end
 
-    clk_div_prv <= clk_div;
+    clk_div_reg <= clk_div;
+    clk_div_prv <= clk_div_reg;
 end
 
 // POINT (it is possible that it will need to be one cycle before everything else, not sure how to solve at the moment, will see tommorow)
