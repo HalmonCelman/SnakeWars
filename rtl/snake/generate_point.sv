@@ -59,8 +59,10 @@ always_ff @(posedge clk_75) begin : seed_rdy_control_signal_for_uart
 		seed_rdy <= 1'b0;
 end
 
+logic clk_div_prv, clk_div_reg, pos_clk_div;
+assign pos_clk_div = ((clk_div_prv == 1'b0) && (clk_div_reg == 1'b1));
 
-always_ff @(posedge (clk_div | local_start)) begin : point_generation 
+always_ff @(posedge clk_75) begin : point_generation 
     if(rst) begin
         point_x <= 5'b0;
         point_y <= 5'b0;       
@@ -70,15 +72,17 @@ always_ff @(posedge (clk_div | local_start)) begin : point_generation
     end else if(mode == GAME && mode_prvs_point == MENU && local_start) begin
         point_x <= ((seed_x) % 30) + 1;
         point_y <= ((seed_y) % 22) + 1;
-    end else if (mode == GAME && colision) begin
+    end else if (mode == GAME && colision && pos_clk_div) begin
         point_x <= (lfsr(point_x) % 30) + 1;
         point_y <= (lfsr(point_y) % 22) + 1;
     end else begin
         point_x <= point_x;
         point_y <= point_y;
     end
-	
-	mode_prvs_point <= mode;
+
+    mode_prvs_point <= mode;
+    clk_div_reg <= clk_div;
+    clk_div_prv <= clk_div_reg;
 end
 
 endmodule

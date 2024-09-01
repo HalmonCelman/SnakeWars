@@ -302,6 +302,7 @@ always_comb begin
     end
 
     if(singleplayer) begin
+        eaten2_nxt = 1'b0;
         map_nxt.snake2.head_x = map.snake2.head_x;
         map_nxt.snake2.head_y = map.snake2.head_y;
         map_nxt.snake2.length = map.snake2.length;
