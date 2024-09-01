@@ -86,7 +86,7 @@ mode_control u_mode_control(
     .mode(mode_int)
 );
 
-move u_move (
+move_n_collisions u_move_n_collisions (
     .clk(clk),
     .clk_div(clk_divided),
     .rst,

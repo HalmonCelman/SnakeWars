@@ -55,7 +55,7 @@ set sv_files {
     ../rtl/snake/draw/rom/texts/txt_two_players.sv
     ../rtl/snake/draw/rom/texts/txt_win.sv
     ../rtl/snake/mouse_move.sv
-    ../rtl/snake/move.sv
+    ../rtl/snake/move_n_collisions.sv
     ../rtl/snake/communicate.sv
     ../rtl/snake/generate_point.sv
     ../rtl/snake/snake_pkg.sv

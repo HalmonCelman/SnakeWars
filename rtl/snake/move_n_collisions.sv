@@ -4,7 +4,7 @@ Authors: Krzysztof Korbaś, Emilia Jerdanek
 
 import snake_pkg::*;
 
-module move(
+module move_n_collisions(
     input wire clk,
     input wire clk_div,
     input wire rst,
@@ -199,8 +199,8 @@ always_comb begin
     died2 = (suicide2 || got_killed2 || hit_wall2 || head_bump);
 
     // is it long enough? remember that you can also win without killing anyone
-    long1 = (map_nxt.snake1.length == MAX_SNAKE_LENGTH);
-    long2 = (map_nxt.snake2.length == MAX_SNAKE_LENGTH);
+    long1 = (map.snake1.length == MAX_SNAKE_LENGTH);
+    long2 = (map.snake2.length == MAX_SNAKE_LENGTH);
 
     won  = ((long1 | died2) & ~died1) & refreshed;
     lost = ((long2 | died1) & ~died2) & refreshed;

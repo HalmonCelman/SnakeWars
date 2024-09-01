@@ -5,38 +5,35 @@ import vga_pkg::*;
 
 module generate_point_tb();
 
+logic clk_75;
+logic clk_div;
+logic rst;
+logic local_start;
+game_mode mode;
+logic [4:0] seed_x_in;
+logic [4:0] seed_y_in;
+logic colision;
+logic [4:0] seed_x_out;
+logic [4:0] seed_y_out;
+logic [4:0] point_x;
+logic [4:0] point_y;
+logic seed_rdy;
 generate_point u_generate_point(
 
 	.clk_75,
 	.clk_div,
 	.rst,
 	.mode,
-	.map_in,
 	.seed_x_in,
 	.seed_y_in,
 	.colision,
 	.seed_x_out,
 	.seed_y_out,
 	.seed_rdy,
-	.map_out,
-	.local_start
+	.local_start,
+	.point_gen_x(point_x),
+	.point_gen_y(point_y)
 );
-
-
-logic clk_75;
-logic clk_div;
-logic rst;
-logic local_start;
-game_mode mode;
-map_s map_in;
-logic [4:0] seed_x_in;
-logic [4:0] seed_y_in;
-logic colision;
-logic [4:0] seed_x_out;
-logic [4:0] seed_y_out;
-logic seed_rdy;
-map_s map_out;
-
 
 initial begin
 	clk_75 = 1'b0;

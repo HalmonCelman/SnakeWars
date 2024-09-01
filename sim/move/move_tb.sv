@@ -1,22 +1,3 @@
-/**
- * San Jose State University
- * EE178 Lab #4
- * Author: prof. Eric Crabilla
- *
- * Modified by: Piotr Kaczmarczyk, Krzysztof Korbaś, Emilia Jerdanek
- *
- * Description:
- * Testbench for top_vga.
- * Thanks to the tiff_writer module, an expected image
- * produced by the project is exported to a tif file.
- * Since the vs signal is connected to the go input of
- * the tiff_writer, the first (top-left) pixel of the tif
- * will not correspond to the vga project (0,0) pixel.
- * The active image (not blanked space) in the tif file
- * will be shifted down by the number of lines equal to
- * the difference between VER_SYNC_START and VER_TOTAL_TIME.
- */
-
 `timescale 1 ns / 1 ps
 
 import snake_pkg::*;
@@ -34,8 +15,6 @@ localparam CLK_PERIOD = 1000/75; //75MHz
  */
 
 logic clk, clk_move, rst;
-logic vs, hs;
-logic [3:0] r, g, b;
 
 /**
  * Clock generation
@@ -65,10 +44,10 @@ end
 //connections
 map_s map;
 
-logic rcvdir, eaten1, eaten2;
+logic rcvdir, eaten;
 direction dir;
 
-move u_move (
+move_n_collisions dut (
     .clk,
     .clk_div(clk_move),
     .rst,
@@ -76,8 +55,7 @@ move u_move (
     .dir2(dir),
     .rcvdir,
     .map,
-    .eaten1,
-    .eaten2,
+    .eaten,
     .com_err()
 );
 
@@ -93,7 +71,7 @@ initial begin
     $display("Starting move simulation...");
 
     $display("Moving LEFT, eating");
-    {dir, rcvdir, eaten1, eaten2} = {LEFT, 1'b0, 1'b0, 1'b0};
+    {dir, rcvdir} = {LEFT, 1'b0};
     @(posedge clk);
     @(posedge clk_move);
     @(posedge clk_move);
