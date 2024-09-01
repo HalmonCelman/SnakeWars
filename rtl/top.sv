@@ -41,6 +41,8 @@ logic start_game_ingoing;
 game_mode mode_int;
 logic won_int, lost_int, draw_int, con_error_int;
 
+logic local_start;
+
 assign vsync = vga_out.vsync;
 assign hsync = vga_out.hsync;
 
@@ -73,6 +75,7 @@ mode_control u_mode_control(
     .clk_75(clk),
 	.rst(rst),
 	.start_game(start_game_ingoing),
+    .local_start,
 	.won(0),
 	.lost(0),
 	.draw(0),
@@ -85,7 +88,6 @@ mode_control u_mode_control(
 
 collisons u_collisions(
     .clk,
-    .rst,
     .clk_div(clk_divided),
     .map(map_gen_p_draw),
     .map_nxt,
@@ -121,6 +123,7 @@ generate_point u_generate_point(
     .clk_div(clk_divided),
     .rst(rst),
     .mode(mode_int),
+    .local_start,
     .map_in(map_move_gen_p),
     .seed_x_in(seed_x_ingoing),
     .seed_y_in(seed_y_ingoing),

@@ -3,7 +3,6 @@ import snake_pkg::*;
 module collisons(
     input wire clk,
     input wire clk_div,
-    input wire rst,
     input map_s map,
     input map_s map_nxt,
     input game_mode mode,

@@ -30,8 +30,8 @@ endfunction
 logic [4:0] point_x, point_y, act_point_x, act_point_y, seed_x, seed_y;
 game_mode mode_prvs_point;
 
-assign act_point_x = (seed_y_in ? (MAP_WIDTH-point_x-1): point_x);
-assign act_point_y = (seed_y_in ? (MAP_HEIGHT-point_y-1): point_y);
+assign act_point_x = point_x;//(seed_y_in ? (MAP_WIDTH-point_x-1): point_x);
+assign act_point_y = point_y;//(seed_y_in ? (MAP_HEIGHT-point_y-1): point_y);
 
 assign seed_x_out = seed_x;
 assign seed_y_out = seed_y;
@@ -79,10 +79,7 @@ always_ff @(posedge (clk_div | local_start)) begin : point_generation
         point_y <= point_y;
     end
 	
-	if(rst)
-		mode_prvs_point <= MENU;
-	else 
-		mode_prvs_point <= mode;
+	mode_prvs_point <= mode;
 end
 
 
