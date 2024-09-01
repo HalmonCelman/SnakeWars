@@ -128,11 +128,11 @@ always_comb begin
     if(tx_full == 1'b0) begin
         if(seed_rdy) begin
             wr_uart_nxt = 1'b1;
-            w_data_nxt = {2'b01,  2'b00, seed_x_in};
+            w_data_nxt = {2'b01,  1'b0, seed_x_in};
             seed_flag_nxt = 1'b1;
         end else if(seed_flag) begin
             wr_uart_nxt = 1'b1;
-            w_data_nxt = {2'b10, 2'b00, seed_y_in};
+            w_data_nxt = {2'b10, 1'b0, seed_y_in};
             seed_flag_nxt = 1'b0;
         end else if(send == 1'b1 && send_prv == 1'b0) begin // positive edge of send
             wr_uart_nxt = 1'b1;

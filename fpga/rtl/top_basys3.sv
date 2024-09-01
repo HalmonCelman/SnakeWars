@@ -25,8 +25,6 @@ logic rx, tx;
 
 assign rx = JA0;
 assign JA1 = tx;
-assign led0 = rx;
-assign led1 = rx;
 
 
 (* KEEP = "TRUE" *)

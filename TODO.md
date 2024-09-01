@@ -23,15 +23,13 @@
 - (X) utworzyć wrapper - z wyjściem **direction** określającym w którą stronę snake się porusza
 
 ## Część 3 - komunikacja
-- ( ) sprawdzić działanie uarta (wysyłanie i odbieranie)
+- (X) sprawdzić działanie uarta (wysyłanie i odbieranie)
 - (X) napisać FSM odbierający kierunek snake'a przeciwnika i wysyłający kierunek snake'a gracza
-- ( ) dodać do FSM komunikację w menu - czy gracz się połączył
-- ( ) dodać funkcjonalność, że jak przyjdzie informacja o kolizji to zostanie wysłana do drugiego gracza
-- ( ) jeśli przyjdzie informacja o kolizji drugiego gracza to dać znać modułowi rysującemu o ekranie zwycięstwa
+- (X) dodać do FSM komunikację w menu - czy gracz się połączył
 
 ## Część 4 - generacja punktu
-- ( ) stworzyć generator liczb losowych
-- ( ) dostosować aby zwracał x i y punktu na mapie kiedy dostanie sygnał eaten
+- (X) stworzyć generator liczb losowych
+- (X) dostosować aby zwracał x i y punktu na mapie kiedy dostanie sygnał eaten
 
 ## Część 5 - kolizje i ruch
 - (X) stworzyć dzielnik zegara który da zegar co pół sekundy

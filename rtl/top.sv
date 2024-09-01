@@ -21,7 +21,7 @@ module top (
     inout wire mouse_data
 );
 
-map_s map_nxt, map_move_gen_p, map_gen_p_draw;
+map_s map;
 
 vga_if vga_in(), vga_out();
 
@@ -30,16 +30,16 @@ direction dir_int, dir2_int;
 logic clk_divided;
 logic left_int, right_int;
 
-logic rcvdir, refreshed;
-logic eaten1, eaten2, eaten1_pre, eaten2_pre;
+logic rcvdir;
+logic eaten;
 
-logic [4:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing;
+logic [4:0] seed_x_ingoing, seed_y_ingoing, seed_x_outgoing, seed_y_outgoing, point_x, point_y;
 logic send_seed;
 
 logic start_game_ingoing;
 
 game_mode mode_int;
-logic won_int, lost_int, draw_int, con_error_int;
+logic won, lost, draw, con_error_int;
 
 logic local_start;
 
@@ -55,7 +55,7 @@ vga_timing u_vga_timing(
 draw u_draw (
     .clk(clk),
     .rst(rst),
-    .act_tile(map_gen_p_draw.tiles[vga_in.vcount/TILE_SIZE][vga_in.hcount/TILE_SIZE]),
+    .act_tile(map.tiles[vga_in.vcount/TILE_SIZE][vga_in.hcount/TILE_SIZE]),
     .mouse_x(mouse_x),
     .mouse_y(mouse_y),
     .mode(mode_int),
@@ -76,46 +76,32 @@ mode_control u_mode_control(
 	.rst(rst),
 	.start_game(start_game_ingoing),
     .local_start,
-	.won(0),
-	.lost(0),
-	.draw(0),
-	.con_error(con_error_int),
+	.won,
+	.lost,
+	.draw,
+	.con_error(0), //con_error_int
 	.click_x(mouse_x),
 	.click_y(mouse_y),
 	.click_e(left_int),
     .mode(mode_int)
 );
 
-collisons u_collisions(
-    .clk,
-    .clk_div(clk_divided),
-    .map(map_gen_p_draw),
-    .map_nxt,
-    .mode(GAME),
-    .rcvdir,
-    .eaten1,
-    .eaten2,
-    .eaten1_pre,
-    .eaten2_pre,
-    .won(won_int),
-    .lost(lost_int),
-    .draw(draw_int)
-);
-
 move u_move (
     .clk(clk),
     .clk_div(clk_divided),
     .rst,
-    .refreshed,
     .mode(mode_int),
     .dir1(dir_int),
     .dir2(dir2_int),
     .rcvdir,
-    .map(map_move_gen_p),
-    .map_nxt,
+    .point_x,
+    .point_y,
+    .map,
     .com_err(con_error_int),
-    .eaten1(eaten1_pre),
-    .eaten2(eaten2_pre)
+    .eaten,
+    .won,
+    .lost,
+    .draw
 );
 
 generate_point u_generate_point(
@@ -124,14 +110,14 @@ generate_point u_generate_point(
     .rst(rst),
     .mode(mode_int),
     .local_start,
-    .map_in(map_move_gen_p),
     .seed_x_in(seed_x_ingoing),
     .seed_y_in(seed_y_ingoing),
-    .colision(eaten1 | eaten2),
+    .colision(eaten),
     .seed_x_out(seed_x_outgoing),
     .seed_y_out(seed_y_outgoing),
     .seed_rdy(send_seed),
-    .map_out(map_gen_p_draw)
+    .point_gen_x(point_x),
+    .point_gen_y(point_y)
 );
 
 mouse_move u_mouse_move (
