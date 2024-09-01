@@ -12,6 +12,7 @@ module move_n_collisions(
     input direction dir2,
     input wire rcvdir,
     input game_mode mode,
+    input wire singleplayer,
     input wire [WIDTH_BITS-1:0]  point_x,
     input wire [HEIGHT_BITS-1:0] point_y,
 
@@ -89,11 +90,19 @@ always_ff @(posedge clk) begin
         map.snake1.tail_x <= START_POS_X;
         map.snake1.tail_y <= START_POS_Y+START_LENGTH-1;
 
-        map.snake2.length <= START_LENGTH;
-        map.snake2.head_x <= START_POS_X_2;
-        map.snake2.head_y <= START_POS_Y_2+START_LENGTH-1;
-        map.snake2.tail_x <= START_POS_X_2;
-        map.snake2.tail_y <= START_POS_Y_2;
+        if(singleplayer) begin
+            map.snake2.length <= '0;
+            map.snake2.head_x <= '0;
+            map.snake2.head_y <= '0;
+            map.snake2.tail_x <= '0;
+            map.snake2.tail_y <= '0;
+        end else begin
+            map.snake2.length <= START_LENGTH;
+            map.snake2.head_x <= START_POS_X_2;
+            map.snake2.head_y <= START_POS_Y_2+START_LENGTH-1;
+            map.snake2.tail_x <= START_POS_X_2;
+            map.snake2.tail_y <= START_POS_Y_2;
+        end
 
         for(int i=0;i<MAP_HEIGHT;i++) begin
             for(int j=0;j<MAP_WIDTH;j++) begin
@@ -101,7 +110,7 @@ always_ff @(posedge clk) begin
                     map.tiles[i][j] <= WALL;
                 end else if((i>=START_POS_Y && i<START_POS_Y+START_LENGTH) && (j==START_POS_X)) begin
                     map.tiles[i][j] <= SNAKE1;
-                end else if((i>=START_POS_Y_2 && i<START_POS_Y_2+START_LENGTH) && (j==START_POS_X_2)) begin
+                end else if((i>=START_POS_Y_2 && i<START_POS_Y_2+START_LENGTH) && (j==START_POS_X_2) && ~singleplayer) begin
                     map.tiles[i][j] <= SNAKE2;
                 end else begin
                     map.tiles[i][j] <= EMPTY;
@@ -120,8 +129,13 @@ always_ff @(posedge clk) begin
         end
 
     end else begin
-        com_err <= com_err_nxt;
-        refreshed <= refreshed_nxt;
+        if(singleplayer) begin
+            com_err   <= 1'b0;
+            refreshed <= 1'b1;
+        end else begin
+            com_err <= com_err_nxt;
+            refreshed <= refreshed_nxt;
+        end
 
         if(pos_clk_div) begin
             eaten1            <= eaten1_nxt;
@@ -142,22 +156,24 @@ always_ff @(posedge clk) begin
             hit_wall1      <= hit_wall1_nxt;
         end
 
-        if(rcvdir) begin
-            eaten2            <= eaten2_nxt;
-            map.snake2.length <= map_nxt.snake2.length;
-            map.snake2.head_x <= map_nxt.snake2.head_x;
-            map.snake2.head_y <= map_nxt.snake2.head_y;
-            map.snake2.tail_x <= map_nxt.snake2.tail_x;
-            map.snake2.tail_y <= map_nxt.snake2.tail_y;
-            for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-                map.snake2.segments[k] <= map_nxt.snake2.segments[k];
-            end
+        if(~singleplayer) begin
+            if(rcvdir) begin
+                eaten2            <= eaten2_nxt;
+                map.snake2.length <= map_nxt.snake2.length;
+                map.snake2.head_x <= map_nxt.snake2.head_x;
+                map.snake2.head_y <= map_nxt.snake2.head_y;
+                map.snake2.tail_x <= map_nxt.snake2.tail_x;
+                map.snake2.tail_y <= map_nxt.snake2.tail_y;
+                for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+                    map.snake2.segments[k] <= map_nxt.snake2.segments[k];
+                end
 
-            head2_body1    <= head2_body1_nxt;
-            head2_body2    <= head2_body2_nxt;
-            head2_oldtail1 <= head2_oldtail1_nxt;
-            head2_oldtail2 <= head2_oldtail2_nxt;
-            hit_wall2      <= hit_wall2_nxt;
+                head2_body1    <= head2_body1_nxt;
+                head2_body2    <= head2_body2_nxt;
+                head2_oldtail1 <= head2_oldtail1_nxt;
+                head2_oldtail2 <= head2_oldtail2_nxt;
+                hit_wall2      <= hit_wall2_nxt;
+            end
         end
 
         for(int i=0;i<MAP_HEIGHT;i++) begin
@@ -196,7 +212,7 @@ always_comb begin
     
     // how to die: commit suicide, get killed or sprint into sth hard(wall) 
     died1 = (suicide1 || got_killed1 || hit_wall1 || head_bump);
-    died2 = (suicide2 || got_killed2 || hit_wall2 || head_bump);
+    died2 = singleplayer ? 1'b0 : (suicide2 || got_killed2 || hit_wall2 || head_bump);
 
     // is it long enough? remember that you can also win without killing anyone
     long1 = (map.snake1.length == MAX_SNAKE_LENGTH);
@@ -285,79 +301,89 @@ always_comb begin
         end
     end
 
-    case(dir2)
-        UP: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y+1;
-        end
-        DOWN: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y-1;
-        end
-        RIGHT: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x-1;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-        LEFT: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x+1;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-        default: begin 
-            map_nxt.snake2.head_x = map.snake2.head_x;
-            map_nxt.snake2.head_y = map.snake2.head_y;
-        end
-    endcase
-
-    if(map_nxt.snake2.head_x == point_x && map_nxt.snake2.head_y == point_y) begin
-        eaten2_nxt = 1'b1;
-        map_nxt.snake2.length = map.snake2.length+1;
-    end else begin
-        eaten2_nxt = 1'b0;
+    if(singleplayer) begin
+        map_nxt.snake2.head_x = map.snake2.head_x;
+        map_nxt.snake2.head_y = map.snake2.head_y;
         map_nxt.snake2.length = map.snake2.length;
-    end
-
-    if(~eaten2_nxt) begin
-        case(map.snake2.segments[map.snake2.length-2])
-            NONE: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
-            end
-            UP: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y+1;
-            end
-            DOWN: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y-1;
-            end
-            RIGHT: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x-1;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
-            end
-            LEFT: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x+1;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
-            end
-            default: begin  
-                map_nxt.snake2.tail_x = map.snake2.tail_x;
-                map_nxt.snake2.tail_y = map.snake2.tail_y;
-            end
-        endcase
-    end else begin
         map_nxt.snake2.tail_x = map.snake2.tail_x;
         map_nxt.snake2.tail_y = map.snake2.tail_y;
-    end
-
-    for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
-        if(k<map_nxt.snake2.length-1) begin
-            if(dir2 != NONE) begin
-                if(k==0)    map_nxt.snake2.segments[k] = dir2;
-                else        map_nxt.snake2.segments[k] = map.snake2.segments[k-1];
-            end else begin
-                map_nxt.snake2.segments[k] = map.snake2.segments[k];
-            end
-        end else begin
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++)
             map_nxt.snake2.segments[k] = NONE;
+    end else begin
+        case(dir2)
+            UP: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y+1;
+            end
+            DOWN: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y-1;
+            end
+            RIGHT: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x-1;
+                map_nxt.snake2.head_y = map.snake2.head_y;
+            end
+            LEFT: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x+1;
+                map_nxt.snake2.head_y = map.snake2.head_y;
+            end
+            default: begin 
+                map_nxt.snake2.head_x = map.snake2.head_x;
+                map_nxt.snake2.head_y = map.snake2.head_y;
+            end
+        endcase
+
+        if(map_nxt.snake2.head_x == point_x && map_nxt.snake2.head_y == point_y) begin
+            eaten2_nxt = 1'b1;
+            map_nxt.snake2.length = map.snake2.length+1;
+        end else begin
+            eaten2_nxt = 1'b0;
+            map_nxt.snake2.length = map.snake2.length;
+        end
+
+        if(~eaten2_nxt) begin
+            case(map.snake2.segments[map.snake2.length-2])
+                NONE: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                UP: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y+1;
+                end
+                DOWN: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y-1;
+                end
+                RIGHT: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x-1;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                LEFT: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x+1;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+                default: begin  
+                    map_nxt.snake2.tail_x = map.snake2.tail_x;
+                    map_nxt.snake2.tail_y = map.snake2.tail_y;
+                end
+            endcase
+        end else begin
+            map_nxt.snake2.tail_x = map.snake2.tail_x;
+            map_nxt.snake2.tail_y = map.snake2.tail_y;
+        end
+
+        for(int k=0;k<MAX_SNAKE_LENGTH-1;k++) begin
+            if(k<map_nxt.snake2.length-1) begin
+                if(dir2 != NONE) begin
+                    if(k==0)    map_nxt.snake2.segments[k] = dir2;
+                    else        map_nxt.snake2.segments[k] = map.snake2.segments[k-1];
+                end else begin
+                    map_nxt.snake2.segments[k] = map.snake2.segments[k];
+                end
+            end else begin
+                map_nxt.snake2.segments[k] = NONE;
+            end
         end
     end
 
@@ -369,13 +395,13 @@ always_comb begin
 
     for(int i=0;i<MAP_HEIGHT;i++) begin
         for(int j=0;j<MAP_WIDTH;j++) begin
-                 if(pos_clk_div & (map_nxt.snake1.head_y == i && map_nxt.snake1.head_x == j))                               map_nxt.tiles[i][j] = SNAKE1;
-            else if(rcvdir      & (map_nxt.snake2.head_y == i && map_nxt.snake2.head_x == j))                               map_nxt.tiles[i][j] = SNAKE2;
-            else if(map.snake1.head_y == i && map.snake1.head_x == j)                                                       map_nxt.tiles[i][j] = SNAKE1;
-            else if(map.snake2.head_y == i && map.snake2.head_x == j)                                                       map_nxt.tiles[i][j] = SNAKE2;
-            else if(i == point_y && j == point_x && map.tiles[point_y][point_x] == EMPTY)                                   map_nxt.tiles[i][j] = POINT;
-            else if((rcvdir      & (map.snake2.tail_y == i && map.snake2.tail_x == j && dir2 != NONE && ~eaten2_nxt))
-                 || (pos_clk_div & (map.snake1.tail_y == i && map.snake1.tail_x == j && dir1 != NONE && ~eaten1_nxt)))      map_nxt.tiles[i][j] = EMPTY;
+                 if(           pos_clk_div & (map_nxt.snake1.head_y == i && map_nxt.snake1.head_x == j))                          map_nxt.tiles[i][j] = SNAKE1;
+            else if(~singleplayer & rcvdir & (map_nxt.snake2.head_y == i && map_nxt.snake2.head_x == j))                          map_nxt.tiles[i][j] = SNAKE2;
+            else if(                map.snake1.head_y == i && map.snake1.head_x == j)                                             map_nxt.tiles[i][j] = SNAKE1;
+            else if(~singleplayer & map.snake2.head_y == i && map.snake2.head_x == j)                                             map_nxt.tiles[i][j] = SNAKE2;
+            else if(i == point_y && j == point_x && map.tiles[point_y][point_x] == EMPTY)                                         map_nxt.tiles[i][j] = POINT;
+            else if((~singleplayer & rcvdir & (map.snake2.tail_y == i && map.snake2.tail_x == j && dir2 != NONE && ~eaten2_nxt))
+                 || (           pos_clk_div & (map.snake1.tail_y == i && map.snake1.tail_x == j && dir1 != NONE && ~eaten1_nxt))) map_nxt.tiles[i][j] = EMPTY;
             else map_nxt.tiles[i][j] = map.tiles[i][j];
         end
     end

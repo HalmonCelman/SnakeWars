@@ -17,7 +17,8 @@ module mode_control(
 	input logic click_e,
 
     output game_mode mode,
-	output logic local_start
+	output logic local_start,
+	output logic singleplayer
 );
 
 
@@ -25,15 +26,22 @@ always_ff @(posedge clk_75) begin
 	if(rst) begin
 		mode <= MENU;
 		local_start <= 1'b0;
+		singleplayer <= 1'b0;
 	end else
 		case(mode)
 		
 			MENU: begin
-				if(click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W
+				if(click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W		// one player
+				    && click_y >= BUTTON1_Y &&  click_y <  BUTTON1_Y + BUTTONS_H) begin  
+					mode <= GAME;
+					local_start <= 1'b1;
+					singleplayer <= 1'b1;
+				end
+				else if(click_e &&  click_x >= BUTTONS_X &&  click_x <  BUTTONS_X + BUTTONS_W	// two_players
 				    && click_y >= BUTTON2_Y &&  click_y <  BUTTON2_Y + BUTTONS_H) begin  
 					mode <= GAME;
 					local_start <= 1'b1;
-				
+					singleplayer <= 1'b0;
 				end else if(start_game) begin	
 					mode <= GAME;
 					local_start <= 1'b0;

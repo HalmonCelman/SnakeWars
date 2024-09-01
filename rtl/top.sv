@@ -41,7 +41,7 @@ logic start_game_ingoing;
 game_mode mode_int;
 logic won, lost, draw, con_error_int;
 
-logic local_start;
+logic local_start, singleplayer;
 
 assign vsync = vga_out.vsync;
 assign hsync = vga_out.hsync;
@@ -79,11 +79,12 @@ mode_control u_mode_control(
 	.won,
 	.lost,
 	.draw,
-	.con_error(0), //con_error_int
+	.con_error(con_error_int), 
 	.click_x(mouse_x),
 	.click_y(mouse_y),
 	.click_e(left_int),
-    .mode(mode_int)
+    .mode(mode_int),
+    .singleplayer
 );
 
 move_n_collisions u_move_n_collisions (
@@ -91,6 +92,7 @@ move_n_collisions u_move_n_collisions (
     .clk_div(clk_divided),
     .rst,
     .mode(mode_int),
+    .singleplayer,
     .dir1(dir_int),
     .dir2(dir2_int),
     .rcvdir,
@@ -154,6 +156,7 @@ communicate u_communicate(
     .seed_x_out(seed_x_ingoing),
     .seed_y_out(seed_y_ingoing),
     .tx,
+    .singleplayer,
     .dir1(dir_int),
     .dir2(dir2_int),
     .rcvdir
